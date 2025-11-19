@@ -1,0 +1,371 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import toast from "react-hot-toast";
+
+import {
+  Tabs,
+  Tab,
+  Card,
+  Form,
+  Button,
+  Row,
+  Col,
+  InputGroup,
+} from "react-bootstrap";
+import { Bitcoin, Wallet, CreditCard, QrCode } from "lucide-react";
+
+import UserNav from "../components/Nav/UserNav";
+import DashboardNav from "../components/Nav/DashboardNav";
+
+const Deposit = () => {
+  const [walletAddress, setWalletAddress] = React.useState("");
+
+  const walletMap = {
+    bitcoin: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+    ethereum: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    usdt: "TYD2E1jX7J9s8XfC3Zy9H2s4a9B8kLmN7A",
+  };
+
+const bankDeposit = async () => {
+  toast.success("Coming Soon!, Use Crypto method!")
+}
+
+  const copyToClipboard = () => {
+    if (!walletAddress) return;
+    navigator.clipboard.writeText(walletAddress);
+    toast.success(`Copied!`)
+  };
+
+  return (
+    <div className="d-flex flex-column min-vh-100 dark">
+      {/* ---------- HEADER ---------- */}
+      <Navbar
+        expand="sm"
+        className="sticky-top z-10 border-bottom bg-black px-3"
+        style={{ height: "64px" }}
+      >
+        <Navbar.Brand
+          as={Link}
+          to="/dashboard"
+          className="d-flex align-items-center gap-2 fw-semibold"
+        >
+          <Bitcoin className="h-6 w-6" style={{ color: "orange" }} />
+          <span className="text-light">BitRadex</span>
+        </Navbar.Brand>
+
+        <Nav className="ms-auto d-flex align-items-center gap-4">
+          <UserNav />
+        </Nav>
+      </Navbar>
+
+      {/* ---------- BODY ---------- */}
+      <div className="d-flex flex-grow-1">
+        {/* ---------- SIDEBAR ---------- */}
+        <aside
+          className="d-none d-md-block border-end bg-muted-40"
+          style={{ width: "260px" }}
+        >
+          <div className="d-flex flex-column h-100 py-2 gap-2">
+            <div className="px-4 py-2">
+              <h2 className="text-light fs-5 fw-semibold mb-1">Dashboard</h2>
+              <p className="bitradex-text-muted small mb-0">
+                Manage your crypto investments
+              </p>
+            </div>
+            <DashboardNav />
+            <div style={{ marginTop: "-10px" }} className="flex-grow-1"></div>
+          </div>
+        </aside>
+
+        {/* ---------- MAIN CONTENT ---------- */}
+        <main className="flex-grow-1 p-4 p-md-5">
+          <div className="container my-4">
+            <div className="mb-4">
+              <h3
+                style={{ borderBottom: "5px solid orange", width: "250px" }}
+                className="text-light"
+              >
+                Deposit Funds
+              </h3>
+              <p className="text-light">
+                Add funds to your account using your preferred payment method
+              </p>
+            </div>
+
+            <Tabs defaultActiveKey="crypto" className="mb-4">
+              <Tab
+                eventKey="crypto"
+                style={{ width: "100%" }}
+                title="Cryptocurrency"
+              >
+                <Card className="bg-dark text-light mb-4">
+                  <Card.Header>
+                    <Card.Title>Deposit with Cryptocurrency</Card.Title>
+                    <Card.Subtitle className="text-light">
+                      Send crypto directly to your CryptoVest wallet
+                    </Card.Subtitle>
+                  </Card.Header>
+                  <Card.Body>
+                    <Form>
+                      {/* Amount Input */}
+                      <Form.Group className="mb-3" controlId="cryptoAmount">
+                        <Form.Label>Amount (USD)</Form.Label>
+                        <InputGroup>
+                          <InputGroup.Text>$</InputGroup.Text>
+                          <Form.Control
+                            className=""
+                            type="number"
+                            placeholder="0.00"
+                          />
+                        </InputGroup>
+                        <Form.Text className="text-light">
+                          Minimum deposit: $10.00
+                        </Form.Text>
+                      </Form.Group>
+
+                      {/* Select Cryptocurrency */}
+                      <Form.Group className="mb-3">
+                        <Form.Label>Select cryptocurrency</Form.Label>
+                        <Row className="g-3">
+                          <Col md={4}>
+                            <Form.Check
+                              type="radio"
+                              label={
+                                <>
+                                  <Bitcoin
+                                    onChange={() =>
+                                      setWalletAddress(walletMap.bitcoin)
+                                    }
+                                    className="mb-1 me-2"
+                                    style={{ color: "orange" }}
+                                  />{" "}
+                                  Bitcoin
+                                </>
+                              }
+                              name="cryptoMethod"
+                              id="bitcoin"
+                              onChange={() =>
+                                setWalletAddress(walletMap.bitcoin)
+                              }
+                            />
+                          </Col>
+                          <Col md={4}>
+                            <Form.Check
+                              type="radio"
+                              label={
+                                <>
+                                  <Wallet
+                                    onChange={() =>
+                                      setWalletAddress(walletMap.usdt)
+                                    }
+                                    className="mb-1 me-2"
+                                    style={{ color: "orange" }}
+                                  />{" "}
+                                  Ethereum
+                                </>
+                              }
+                              name="cryptoMethod"
+                              id="ethereum"
+                              onChange={() =>
+                                setWalletAddress(walletMap.ethereum)
+                              }
+                            />
+                          </Col>
+                          <Col md={4}>
+                            <Form.Check
+                              type="radio"
+                              label={
+                                <>
+                                  <CreditCard
+                                    onChange={() =>
+                                      setWalletAddress(walletMap.usdt)
+                                    }
+                                    className="mb-1 me-2"
+                                    style={{ color: "orange" }}
+                                  />{" "}
+                                  USDT
+                                </>
+                              }
+                              name="cryptoMethod"
+                              id="usdt"
+                              onChange={() => setWalletAddress(walletMap.usdt)}
+                            />
+                          </Col>
+                        </Row>
+                      </Form.Group>
+
+                      {/* QR Code Section */}
+                      <Card className="text-center bg-black text-dark mb-3">
+                        <Card.Body>
+                          <QrCode size={128} className="mb-3 text-light" />
+                          <p className="text-success">
+                            Scan QR code or copy address
+                          </p>
+                          <InputGroup>
+                            <Form.Control readOnly value={walletAddress} />
+                            <Button
+                              variant="outline-light"
+                              onClick={copyToClipboard}
+                            >
+                              Copy
+                            </Button>
+                          </InputGroup>
+                        </Card.Body>
+                      </Card>
+
+                      {/* Important Notes */}
+                      <Card className="bg-black text-light">
+                        <Card.Body>
+                          <h5>Important Notes:</h5>
+                          <ul>
+                            <li>
+                              <span className="m-2" style={{ color: "orange" }}>
+                                ✔
+                              </span>{" "}
+                              Send only the selected cryptocurrency to this
+                              address
+                            </li>
+                            <li>
+                              <span className="m-2" style={{ color: "orange" }}>
+                                ✔
+                              </span>{" "}
+                              Minimum deposit amount is $10.00
+                            </li>
+                            <li>
+                              <span className="m-2" style={{ color: "orange" }}>
+                                ✔
+                              </span>{" "}
+                              Deposits typically confirm within 30 minutes
+                            </li>
+                            <li>
+                              <span className="m-2" style={{ color: "orange" }}>
+                                ✔
+                              </span>{" "}
+                              Contact support if you encounter any issues
+                            </li>
+                          </ul>
+                        </Card.Body>
+                      </Card>
+                    </Form>
+                  </Card.Body>
+                </Card>
+              </Tab>
+
+              <Tab eventKey="fiat" title="Bank / Card">
+                <Card className="bg-dark text-light">
+                  <Card.Header>
+                    <Card.Title>Deposit with Bank or Card</Card.Title>
+                    <Card.Subtitle className="text-light">
+                      Add funds using your bank account or credit/debit card
+                    </Card.Subtitle>
+                  </Card.Header>
+                  <Card.Body>
+                    <Form>
+                      {/* Amount Input */}
+                      <Form.Group className="mb-3" controlId="fiatAmount">
+                        <Form.Label>Amount (USD)</Form.Label>
+                        <InputGroup>
+                          <InputGroup.Text>$</InputGroup.Text>
+                          <Form.Control type="number" placeholder="0.00" />
+                        </InputGroup>
+                        <Form.Text className="text-light">
+                          Minimum deposit: $10.00
+                        </Form.Text>
+                      </Form.Group>
+
+                      {/* Payment Method */}
+                      <Form.Group className="mb-3">
+                        <Form.Label>Select payment method</Form.Label>
+                        <Row className="g-3">
+                          <Col md={6}>
+                            <Form.Check
+                              type="radio"
+                              label={
+                                <>
+                                  <CreditCard
+                                    className="mb-1 me-2"
+                                    style={{ color: "orange" }}
+                                  />{" "}
+                                  Credit/Debit Card
+                                </>
+                              }
+                              name="fiatMethod"
+                              id="card"
+                            />
+                          </Col>
+                          <Col md={6}>
+                            <Form.Check
+                              type="radio"
+                              label={
+                                <>
+                                  <Wallet
+                                    className="mb-1 me-2"
+                                    style={{ color: "orange" }}
+                                  />{" "}
+                                  Bank Transfer
+                                </>
+                              }
+                              name="fiatMethod"
+                              id="bank"
+                            />
+                          </Col>
+                        </Row>
+                      </Form.Group>
+
+                      {/* Card Details */}
+                      <Row className="g-3 mb-3">
+                        <Col md={6}>
+                          <Form.Group controlId="cardNumber">
+                            <Form.Label>Card Number</Form.Label>
+                            <Form.Control placeholder="1234 5678 9012 3456" />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group controlId="cardName">
+                            <Form.Label>Name on Card</Form.Label>
+                            <Form.Control placeholder="John Doe" />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+
+                      <Row className="g-3 mb-3">
+                        <Col md={6}>
+                          <Form.Group controlId="expiry">
+                            <Form.Label>Expiry Date</Form.Label>
+                            <Form.Control placeholder="MM/YY" />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group controlId="cvc">
+                            <Form.Label>CVC</Form.Label>
+                            <Form.Control placeholder="123" />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+
+                      <Button
+                        variant="primary"
+                        onClick={bankDeposit}
+                        className="w-100 btn-bitradex-warning"
+                      >
+                        Deposit Funds
+                      </Button>
+                    </Form>
+                  </Card.Body>
+                  <Card.Footer className="text-light text-center">
+                    Your payment information is securely processed and never
+                    stored on our servers.
+                  </Card.Footer>
+                </Card>
+              </Tab>
+            </Tabs>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default Deposit;
