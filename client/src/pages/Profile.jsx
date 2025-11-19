@@ -15,9 +15,9 @@ const Profile = () => {
     <div className="d-flex flex-column min-vh-100 dark">
       {/* ---------- HEADER ---------- */}
       <UserNav />
-      
+
       {/* ---------- BODY ---------- */}
-      <div className="d-flex flex-grow-1">
+      <div style={{marginTop: "70px"}} className="d-flex flex-grow-1">
         {/* ---------- SIDEBAR ---------- */}
         <aside
           className="d-none d-md-block border-end bg-muted-40"

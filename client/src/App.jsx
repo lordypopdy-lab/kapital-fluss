@@ -16,10 +16,10 @@ import "./index.css"
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-axios.defaults.baseURL = 'http://localhost:8080 ';
+axios.defaults.baseURL = 'https://kapital-fluss-server.vercel.app';
 axios.defaults.withCredentials = true;
 
-//https://kapital-fluss-server.vercel.app
+//http://localhost:8080
 
 function App() {
 
