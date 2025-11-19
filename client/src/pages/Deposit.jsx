@@ -4,6 +4,8 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import toast from "react-hot-toast";
 
+import { useState, useEffect } from "react";
+
 import {
   Tabs,
   Tab,
@@ -20,6 +22,8 @@ import UserNav from "../components/Nav/UserNav";
 import DashboardNav from "../components/Nav/DashboardNav";
 
 const Deposit = () => {
+  const [user, setUser] = useState([]);
+  const [balance, setBalance] = useState(0);
   const [walletAddress, setWalletAddress] = React.useState("");
 
   const walletMap = {
@@ -27,6 +31,23 @@ const Deposit = () => {
     ethereum: "0x81df9918f6e00ae1f866258335dd5aa2684f92b1",
     usdt: "TG2mu1G75JW8KsqvBjbxWPNxxrb8ni7CAk",
   };
+
+
+  useEffect(()=>{
+
+    const getUser = async () => {
+      await axios.post("/getUser", { email }).then((data) => {
+        if (data) {
+          setUser(data.data);
+          const tBalance =
+            data.data.deposit + data.data.profit + data.data.bonuse;
+          setBalance(tBalance.toFixed(3));
+        }
+      });
+    };
+    getUser();
+  },[])
+
 
 const bankDeposit = async () => {
   toast.success("Coming Soon!, Use Crypto method!")
@@ -94,9 +115,9 @@ const bankDeposit = async () => {
                     <Form>
                       {/* Amount Input */}
                       <Form.Group className="mb-3" controlId="cryptoAmount">
-                        <Form.Label>Amount (USD)</Form.Label>
+                        <Form.Label>Amount <span className="text-warning">-</span> {user && user.currency}</Form.Label>
                         <InputGroup>
-                          <InputGroup.Text>$</InputGroup.Text>
+                          <InputGroup.Text>{user && user.currency}</InputGroup.Text>
                           <Form.Control
                             className=""
                             type="number"
@@ -104,7 +125,7 @@ const bankDeposit = async () => {
                           />
                         </InputGroup>
                         <Form.Text className="text-light">
-                          Minimum deposit: $10.00
+                          Minimum deposit: {user && user.currency}10.00
                         </Form.Text>
                       </Form.Group>
 
@@ -214,7 +235,7 @@ const bankDeposit = async () => {
                               <span className="m-2" style={{ color: "orange" }}>
                                 ✔
                               </span>{" "}
-                              Minimum deposit amount is $10.00
+                              Minimum deposit amount is {user && user.currency}10.00
                             </li>
                             <li>
                               <span className="m-2" style={{ color: "orange" }}>
@@ -248,13 +269,13 @@ const bankDeposit = async () => {
                     <Form>
                       {/* Amount Input */}
                       <Form.Group className="mb-3" controlId="fiatAmount">
-                        <Form.Label>Amount (USD)</Form.Label>
+                        <Form.Label>Amount {user && user.currency}</Form.Label>
                         <InputGroup>
-                          <InputGroup.Text>$</InputGroup.Text>
+                          <InputGroup.Text>{user && user.currency}</InputGroup.Text>
                           <Form.Control type="number" placeholder="0.00" />
                         </InputGroup>
                         <Form.Text className="text-light">
-                          Minimum deposit: $10.00
+                          Minimum deposit: {user && user.currency}10.00
                         </Form.Text>
                       </Form.Group>
 

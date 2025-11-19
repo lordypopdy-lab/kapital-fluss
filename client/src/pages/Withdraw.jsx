@@ -190,7 +190,6 @@ const Withdraw = () => {
                 Withdraw your funds to your preferred destination
               </p>
             </div>
-
             <Tabs defaultActiveKey="crypto" className="mb-4">
               <Tab eventKey="crypto" title="Cryptocurrency">
                 <Card className="bg-dark text-light mb-4">
@@ -350,7 +349,6 @@ const Withdraw = () => {
                   </Card.Footer>
                 </Card>
               </Tab>
-
               <Tab eventKey="fiat" title="Bank Account">
                 <Card className="bg-dark text-light">
                   <Card.Header>
