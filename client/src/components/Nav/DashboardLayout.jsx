@@ -20,24 +20,7 @@ const DashboardLayout = () => {
   return (
     <div className="d-flex flex-column min-vh-100 dark">
       {/* ---------- HEADER ---------- */}
-      <Navbar
-        expand="sm"
-        className="sticky-top z-10 border-bottom bg-black px-3"
-        style={{ height: "64px" }}
-      >
-        <Navbar.Brand
-          as={Link}
-          to="/dashboard"
-          className="d-flex align-items-center gap-2 fw-semibold"
-        >
-          <Bitcoin className="h-6 w-6" style={{color: "orange"}} />
-          <span className="text-light">BitRadex</span>
-        </Navbar.Brand>
-        <Nav className="ms-auto d-flex align-items-center gap-4">
-        <h6 className="text-light">Welcome Back <span className="text-warning">-</span> <span className="text-light">{user && user.name}!</span> </h6>
-          <UserNav />
-        </Nav>
-      </Navbar>
+      <UserNav />
 
       {/* ---------- BODY ---------- */}
       <div className="d-flex flex-grow-1">

@@ -23,9 +23,9 @@ const Deposit = () => {
   const [walletAddress, setWalletAddress] = React.useState("");
 
   const walletMap = {
-    bitcoin: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-    ethereum: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-    usdt: "TYD2E1jX7J9s8XfC3Zy9H2s4a9B8kLmN7A",
+    bitcoin: "1Bk67rKUfXRRCRPrtXFeeyGQ5Vn3J7Zrht",
+    ethereum: "0x81df9918f6e00ae1f866258335dd5aa2684f92b1",
+    usdt: "TG2mu1G75JW8KsqvBjbxWPNxxrb8ni7CAk",
   };
 
 const bankDeposit = async () => {
@@ -41,24 +41,7 @@ const bankDeposit = async () => {
   return (
     <div className="d-flex flex-column min-vh-100 dark">
       {/* ---------- HEADER ---------- */}
-      <Navbar
-        expand="sm"
-        className="sticky-top z-10 border-bottom bg-black px-3"
-        style={{ height: "64px" }}
-      >
-        <Navbar.Brand
-          as={Link}
-          to="/dashboard"
-          className="d-flex align-items-center gap-2 fw-semibold"
-        >
-          <Bitcoin className="h-6 w-6" style={{ color: "orange" }} />
-          <span className="text-light">BitRadex</span>
-        </Navbar.Brand>
-
-        <Nav className="ms-auto d-flex align-items-center gap-4">
-          <UserNav />
-        </Nav>
-      </Navbar>
+      <UserNav />
 
       {/* ---------- BODY ---------- */}
       <div className="d-flex flex-grow-1">
