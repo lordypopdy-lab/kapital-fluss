@@ -1,7 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
+import axios from "axios";
 import toast from "react-hot-toast";
 
 import { useState, useEffect } from "react";
