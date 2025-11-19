@@ -35,6 +35,10 @@ const Deposit = () => {
 
   useEffect(()=>{
 
+    const newU = localStorage.getItem("user");
+    const newUser = JSON.parse(newU);
+    const email = newUser.email;
+
     const getUser = async () => {
       await axios.post("/getUser", { email }).then((data) => {
         if (data) {
