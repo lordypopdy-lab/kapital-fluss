@@ -3,18 +3,18 @@ const router = express.Router();
 const cors = require("cors");
 
 const corsOptions = {
-    origin: 'https://kapital-fluss.vercel.app', 
+    origin: 'http://localhost:5173', 
     credentials: true,
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type,Authorization',
   };
 
-  //http://localhost:5173 
+  //https://kapital-fluss.vercel.app 
   
   router.use(cors(corsOptions));
   router.options('*', cors(corsOptions)); 
 
-const { test, Delete, Decline, Approve, loginUser, createUser, deleteChat, getMessage, loginAdmin, chatSend, getUser, getUsers, addBalance , withdrawBank, getAdminChat, getAccountLevel, withdrawCrypto, AdminGetCrypto, AdminGetBankR, upgradeAccount, getBankRecords, getNotification, getCryptoRecords, notificationAdder, userNotification} = require("../controllers/authController");
+const { test, Delete, Decline, Approve, loginUser, createUser, deleteChat, getMessage, loginAdmin, chatSend, getUser, getUsers, addBalance , withdrawBank, getAdminChat, ressetPassword, getAccountLevel, withdrawCrypto, AdminGetCrypto, AdminGetBankR, upgradeAccount, getBankRecords, getNotification, getCryptoRecords, notificationAdder, userNotification, updatePersonalDetails, updateAddressInfo} = require("../controllers/authController");
 
 router.get('/test', test);
 router.post("/Delete", Delete);
@@ -37,10 +37,13 @@ router.post("/AdminGetCrypto", AdminGetCrypto);
 router.post("/withdrawCrypto", withdrawCrypto);
 router.post("/getBankRecords", getBankRecords);
 router.post("/userMessage", notificationAdder);
+router.post("/ressetPassword", ressetPassword);
 router.post("/getAccountLevel", getAccountLevel);
 router.post("/getNotification", getNotification);
 router.post("/userNotification", userNotification);
 router.post("/getCryptoRecords", getCryptoRecords);
+router.post("/updateAddressInfo", updateAddressInfo);
+router.post("/updatePersonalDetails", updatePersonalDetails);
 
 
 module.exports = router;

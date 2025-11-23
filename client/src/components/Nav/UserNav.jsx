@@ -41,7 +41,7 @@ const UserNav = () => {
           style={{ fontSize: "20px", marginLeft: "" }}
           className="display-4 mt-2 ls-3"
         >
-          <Bitcoin style={{ color: "orange" }} /> BitRadex
+          <Bitcoin style={{ color: "orange" }} /> Kapital-Fluss
         </h4>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">

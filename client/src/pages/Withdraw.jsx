@@ -30,7 +30,7 @@ const Withdraw = () => {
   const [cryptoR, setcryptoR] = useState([]);
   const [bankR, setBankR] = useState([]);
   const [dataCrypto, setdataCrypto] = useState({
-    value: "",
+    value: 0,
     walletAddress: "",
   });
   const [data, setData] = useState({
@@ -145,20 +145,20 @@ const Withdraw = () => {
 
   const handleCopy = async (textToCopy) => {
     try {
-        await navigator.clipboard.writeText(textToCopy);
-        toast.success("Copied successfully!");
+      await navigator.clipboard.writeText(textToCopy);
+      toast.success("Copied successfully!");
     } catch (err) {
-        toast.error("Failed to copy!")
+      toast.error("Failed to copy!");
     }
-};
+  };
 
   return (
     <div className="d-flex flex-column min-vh-100 dark">
       {/* ---------- HEADER ---------- */}
       <UserNav />
-      
+
       {/* ---------- BODY ---------- */}
-      <div style={{marginTop: "70px"}} className="d-flex flex-grow-1">
+      <div style={{ marginTop: "70px" }} className="d-flex flex-grow-1">
         {/* ---------- SIDEBAR ---------- */}
         <aside
           className="d-none d-md-block border-end bg-muted-40"
@@ -220,7 +220,7 @@ const Withdraw = () => {
                         </InputGroup>
                         <Row className="mt-1">
                           <Col className="text-muted small">
-                            Minimum withdrawal: $20.00
+                            Minimum withdrawal: $60.00
                           </Col>
                           <Col className="text-end small">
                             Available:{" "}
@@ -319,7 +319,9 @@ const Withdraw = () => {
                           </Row>
                           <Row className="mb-1">
                             <Col className="text-muted small">Network Fee:</Col>
-                            <Col className="text-end">$2.50</Col>
+                            <Col className="text-end">
+                              ${user && user.transaction_fee}
+                            </Col>
                           </Row>
                           <hr />
                           <Row className="fw-medium">
@@ -327,7 +329,10 @@ const Withdraw = () => {
                             <Col className="text-end">
                               {user?.currency ? user.currency + " " : ""}
                               {dataCrypto?.value
-                                ? Number(dataCrypto.value).toFixed(2) + 2.5
+                                ? (
+                                    Number(dataCrypto.value) +
+                                    Number(user?.transaction_fee || 0)
+                                  ).toFixed(2)
                                 : "0.00"}
                             </Col>
                           </Row>
@@ -479,15 +484,20 @@ const Withdraw = () => {
                             <Col className="text-muted small">
                               Processing Fee:
                             </Col>
-                            <Col className="text-end">$5.00</Col>
+                            <Col className="text-end">
+                              ${user && user.transaction_fee}
+                            </Col>
                           </Row>
                           <hr />
                           <Row className="fw-medium">
                             <Col>Total:</Col>
                             <Col className="text-end">
                               {user?.currency ? user.currency + " " : ""}
-                              {data?.value
-                                ? Number(data.value).toFixed(2) + 5
+                              {dataCrypto?.value
+                                ? (
+                                    Number(data.value) +
+                                    Number(user?.transaction_fee || 0)
+                                  ).toFixed(2)
                                 : "0.00"}
                             </Col>
                           </Row>

@@ -13,7 +13,7 @@ const BitRadexNav = () => {
         {/* Logo */}
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
           <Bitcoin className="h-6 w-6 text-bitradex-orange" />
-          <span className="ms-2 fs-4 fw-bold text-light">BitRadex</span>
+          <span className="ms-2 fs-4 fw-bold text-light">Kapital-Fluss</span>
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="main-nav" />

@@ -181,7 +181,9 @@ const Index = () => {
               <Col lg={6}>
                 <Card className="p-4 bg-black border">
                   <p className="bitradex-text-muted">
-                  "I've tried several crypto investment platforms, but BitRadex stands out with its security features, low fees, and excellent customer support."
+                    "I've tried several crypto investment platforms, but
+                    Kapital-Fluss stands out with its security features, low
+                    fees, and excellent customer support."
                   </p>
                   <div className="d-flex align-items-center mt-3">
                     <div
@@ -212,7 +214,9 @@ const Index = () => {
               <Col lg={6}>
                 <Card className="p-4 bg-black border">
                   <p className="bitradex-text-muted">
-                  "BitRadex has transformed the way I invest in cryptocurrency. The platform is intuitive, secure, and provides all the tools I need to make informed decisions."
+                    "Kapital-Fluss has transformed the way I invest in
+                    cryptocurrency. The platform is intuitive, secure, and
+                    provides all the tools I need to make informed decisions."
                   </p>
                   <div className="d-flex align-items-center mt-3">
                     <div
@@ -220,7 +224,7 @@ const Index = () => {
                       style={{ width: 40, height: 40 }}
                     ></div>
                     <div className="ms-3">
-                    <p className="text-light">
+                      <p className="text-light">
                         <img
                           style={{ borderRadius: "50%" }}
                           width={40}
@@ -273,12 +277,17 @@ const Index = () => {
               {/* Basic */}
               <Col lg={4}>
                 <Card className="p-4 border bg-black border-0">
-                  <h3 className="text-2xl text-light">Basic</h3>
+                  <h3 className="text-2xl text-light">STARTER PLAN</h3>
                   <p className="bitradex-text-muted">For new investors.</p>
                   <h2 className="mt-3 text-light">
-                    $0 <span className="bitradex-text-muted">/month</span>
+                    $200 <span className="bitradex-text-muted">/month</span>
                   </h2>
                   <ul className="mt-3 bitradex-text-muted">
+                    <li>
+                      {" "}
+                      <Check className="h-5 w-5 text-bitradex-orange m-2" />
+                      Signal Pro
+                    </li>
                     <li>
                       {" "}
                       <Check className="h-5 w-5 text-bitradex-orange m-2" />
@@ -309,13 +318,20 @@ const Index = () => {
               {/* Pro */}
               <Col lg={4}>
                 <Card className="p-4 border bg-black border-0">
-                  <h3 className="text-2xl text-light">Pro</h3>
-                  <p className="bitradex-text-muted">For serious investors.</p>
+                  <h3 className="text-2xl text-light">BASIC</h3>
+                  <p className="bitradex-text-muted">
+                    For Mid-Level investors.
+                  </p>
                   <h2 className="mt-3 text-light">
-                    $29 <span className="bitradex-text-muted">/month</span>
+                    $3,000 <span className="bitradex-text-muted">/month</span>
                   </h2>
 
                   <ul className="mt-3 bitradex-text-muted">
+                    <li>
+                      {" "}
+                      <Check className="h-5 w-5 text-bitradex-orange m-2" />
+                      Signal pro
+                    </li>
                     <li>
                       {" "}
                       <Check className="h-5 w-5 text-bitradex-orange m-2" />
@@ -347,13 +363,18 @@ const Index = () => {
               {/* Enterprise */}
               <Col lg={4}>
                 <Card className="p-4 border bg-black border-0">
-                  <h3 className="text-2xl text-light">Enterprise</h3>
+                  <h3 className="text-2xl text-light">PREMIUM</h3>
                   <p className="bitradex-text-muted">For institutions.</p>
                   <h2 className="mt-3 text-light">
-                    Custom <span className="bitradex-text-muted">/month</span>
+                    $5,000 <span className="bitradex-text-muted">/month</span>
                   </h2>
 
                   <ul className="mt-3 bitradex-text-muted">
+                  <li>
+                      {" "}
+                      <Check className="h-5 w-5 text-bitradex-orange m-2" />
+                      Signal pro
+                    </li>
                     <li>
                       {" "}
                       <Check className="h-5 w-5 text-bitradex-orange m-2" />
@@ -404,7 +425,7 @@ const Index = () => {
               Ready to Start Investing?
             </h2>
             <p className="bitradex-text-muted mt-2">
-              Join thousands of investors on BitRadex.
+              Join thousands of investors on Kapital-Fluss.
             </p>
 
             <Link to="/signup">
@@ -424,7 +445,7 @@ const Index = () => {
       {/* FOOTER */}
       <footer className="py-3 border-top text-center">
         <p className="bitradex-text-muted small">
-          © {new Date().getFullYear()} BitRadex. All rights reserved.
+          © {new Date().getFullYear()} Kapital-Fluss. All rights reserved.
         </p>
         <div className="d-flex justify-content-center gap-3 small">
           <Link to="/terms" className="text-light">

@@ -59,7 +59,7 @@ const LoginAdmin = () => {
               className="d-flex align-items-center text-decoration-none"
             >
               <Bitcoin className="h-6 w-6" style={{ color: "orange" }} />
-              <span className="ms-2 fs-4 text-light fw-bold">BitRadex</span>
+              <span className="ms-2 fs-4 text-light fw-bold">Kaptil-Fluss</span>
             </Link>
           </div>
           <h5 className="fw-bold text-light mb-1">Admin | Sign in</h5>
@@ -98,12 +98,6 @@ const LoginAdmin = () => {
                 <Form.Label className="bitradex-text-muted">
                   Password
                 </Form.Label>
-                <Link
-                  to="/forgot-password"
-                  className="small text-bitradex-orange text-decoration-underline"
-                >
-                  Forgot password?
-                </Link>
               </div>
               <Form.Control
                 type="password"

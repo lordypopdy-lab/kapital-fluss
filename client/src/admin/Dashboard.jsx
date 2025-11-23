@@ -241,7 +241,7 @@ const Dashboard = () => {
           className="d-flex align-items-center gap-2 fw-semibold"
         >
           <Bitcoin className="h-6 w-6" style={{ color: "orange" }} />
-          <span className="text-light">BitRadex</span>
+          <span className="text-light">Kaptial-Fluss</span>
         </Navbar.Brand>
 
         <Nav className="ms-auto d-flex align-items-center gap-4">
@@ -784,6 +784,7 @@ const Dashboard = () => {
                     <option value="bonuse">Add bonus</option>
                     <option value="profit">Add Profit</option>
                     <option value="deposit">Add Deposite</option>
+                    <option value="transaction_fee">Edit Transaction Fee</option>
                   </Form.Select>
                   <Button
                     variant="primary"

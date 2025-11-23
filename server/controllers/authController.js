@@ -8,20 +8,122 @@ const adminMessage = require("../models/adminMessage");
 const accountUpgradeModel = require("../models/accountLevel");
 const { hashPassword, comparePassword } = require("../helpers/auth");
 
-
 const mongoose = require("mongoose");
 
+const ressetPassword = async (req, res) => {
+  const { id, current, newPassword } = req.body;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.json({ status: "error", message: "No user found" });
+    }
+
+    const match = await comparePassword(current, user.password);
+    if (!match) {
+      return res.json({ status: "error", message: "Current password is incorrect" });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    await User.updateOne({ _id: id }, { $set: { password: hashedPassword } });
+
+    return res.json({ status: "success", message: "Password updated successfully" });
+
+  } catch (err) {
+    console.error(err);
+    return res.json({ status: "error", message: "Server error" });
+  }
+};
+
+
+const updatePersonalDetails = async (req, res) => {
+  const { id, firstName, lastName, email, phoneNumber } = req.body;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.json({ status: "error", message: "Unidentified user!" });
+    }
+
+    const existingEmail = await User.findOne({ email });
+
+    if (existingEmail && existingEmail._id.toString() !== id) {
+      return res.json({
+        status: "error",
+        message: "Email already in use!",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+      },
+      { new: true }
+    );
+
+    return res.json({
+      status: "success",
+      user: updatedUser,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: "error",
+      message: "Something went wrong!",
+    });
+  }
+};
+
+const updateAddressInfo = async (req, res) => {
+  const { id, Street_Address, city, state_province, zip_code, country } =
+    req.body;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.json({ status: "error", message: "Unidentified user!" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        streetAddress: Street_Address,
+        city,
+        state_province,
+        zip_code,
+        country,
+      },
+      { new: true }
+    );
+
+    return res.json({
+      status: "success",
+      user: updatedUser,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.json({
+      status: "error",
+      message: "Something went wrong!",
+    });
+  }
+};
+
 const getAccountLevel = async (req, res) => {
-      const {ID} = req.body;
-      const ifExist = await accountUpgradeModel.findOne({userID: ID});
+  const { ID } = req.body;
+  const ifExist = await accountUpgradeModel.findOne({ userID: ID });
 
-      if(ifExist){
-        return res.json({
-          Level: ifExist
-        })
-      }
-
-}
+  if (ifExist) {
+    return res.json({
+      Level: ifExist,
+    });
+  }
+};
 
 const upgradeAccount = async (req, res) => {
   try {
@@ -39,7 +141,6 @@ const upgradeAccount = async (req, res) => {
     const ifExist = await accountUpgradeModel.findOne({ userID: ID });
 
     if (!ifExist) {
-
       await accountUpgradeModel.create({
         userID: ID,
         accountLevel: ULevel,
@@ -56,7 +157,10 @@ const upgradeAccount = async (req, res) => {
       });
     }
 
-    await accountUpgradeModel.updateOne({ userID: ID }, { $set: { accountLevel: ULevel } });
+    await accountUpgradeModel.updateOne(
+      { userID: ID },
+      { $set: { accountLevel: ULevel } }
+    );
 
     return res.json({
       success: `User ${ID} has been upgraded to ${ULevel}`,
@@ -73,22 +177,22 @@ const getMessage = async (req, res) => {
   const getNoti = await adminMessage.findOne({ userID: ID });
 
   if (getNoti) {
-    return res.json(getNoti)
+    return res.json(getNoti);
   }
 
   return res.json({ data: "No data" });
-}
+};
 
 const getNotification = async (req, res) => {
   const { ID } = req.body;
   const getNoti = await adminMessage.findOne({ userID: ID });
 
   if (getNoti) {
-    return res.json(getNoti)
+    return res.json(getNoti);
   }
 
   return res.json({ data: "No data" });
-}
+};
 
 const Delete = async (req, res) => {
   const { id } = req.body;
@@ -97,24 +201,23 @@ const Delete = async (req, res) => {
   const checkCrypto = await cryptoModel.findOne({ _id: id });
 
   if (checkBank) {
-    await bankModel.deleteOne({ _id: id })
+    await bankModel.deleteOne({ _id: id });
     return res.json({
-      success: "Transaction Deleted Successfully!"
-    })
+      success: "Transaction Deleted Successfully!",
+    });
   }
 
   if (checkCrypto) {
     await cryptoModel.deleteOne({ _id: id });
     return res.json({
-      success: "Transaction Deleted Successfully!"
-    })
+      success: "Transaction Deleted Successfully!",
+    });
   }
 
   return res.json({
-    error: "Unidentify transaction ID"
-  })
-
-}
+    error: "Unidentify transaction ID",
+  });
+};
 
 const Approve = async (req, res) => {
   const { id } = req.body;
@@ -125,22 +228,21 @@ const Approve = async (req, res) => {
   if (checkBank) {
     await bankModel.updateOne({ _id: id }, { $set: { status: "Approved" } });
     return res.json({
-      success: "Transaction approved Successfully!"
-    })
+      success: "Transaction approved Successfully!",
+    });
   }
 
   if (checkCrypto) {
     await cryptoModel.updateOne({ _id: id }, { $set: { status: "Approved" } });
     return res.json({
-      success: "Transaction Approved Successfully!"
-    })
+      success: "Transaction Approved Successfully!",
+    });
   }
 
   return res.json({
-    error: "Unidentify transaction ID"
-  })
-
-}
+    error: "Unidentify transaction ID",
+  });
+};
 
 const Decline = async (req, res) => {
   const { id } = req.body;
@@ -151,132 +253,137 @@ const Decline = async (req, res) => {
   if (checkBank) {
     await bankModel.updateOne({ _id: id }, { $set: { status: "Declined" } });
     return res.json({
-      success: "Transaction Declined Successfully!"
-    })
+      success: "Transaction Declined Successfully!",
+    });
   }
 
   if (checkCrypto) {
     await cryptoModel.updateOne({ _id: id }, { $set: { status: "Declined" } });
     return res.json({
-      success: "Transaction Declined Successfully!"
-    })
+      success: "Transaction Declined Successfully!",
+    });
   }
 
   return res.json({
-    error: "Unidentify transaction ID"
-  })
-
-}
+    error: "Unidentify transaction ID",
+  });
+};
 
 const userNotification = async (req, res) => {
   const { id, value } = req.body;
   if (!id) {
     return res.json({
-      error: "userID and notification field is required! to send Message"
-    })
+      error: "userID and notification field is required! to send Message",
+    });
   }
 
   if (!value) {
     return res.json({
-      error: "userID and notification field is required! to send Message"
-    })
+      error: "userID and notification field is required! to send Message",
+    });
   }
 
   check01 = await adminMessage.findOne({ userID: id });
   if (check01) {
-    await adminMessage.updateOne({ userID: id }, { $set: { notification: value } });
+    await adminMessage.updateOne(
+      { userID: id },
+      { $set: { notification: value } }
+    );
     return res.json({
-      success: "Notification sent"
-    })
+      success: "Notification sent",
+    });
   }
 
   await adminMessage.create({
     userID: id,
     notification: value,
-  })
+  });
 
   return res.json({
-    success: "Notification sent"
-  })
-}
+    success: "Notification sent",
+  });
+};
 
 const notificationAdder = async (req, res) => {
   const { id, value } = req.body;
 
   if (!id) {
     return res.json({
-      error: "userID and message field is required! to send Message"
-    })
+      error: "userID and message field is required! to send Message",
+    });
   }
 
   if (!value) {
     return res.json({
-      error: "userID and message field is required! to send Message"
-    })
+      error: "userID and message field is required! to send Message",
+    });
   }
 
   check01 = await adminMessage.findOne({ userID: id });
   if (check01) {
-    await adminMessage.updateOne({ userID: id }, { $set: { submitMessage: value } });
+    await adminMessage.updateOne(
+      { userID: id },
+      { $set: { submitMessage: value } }
+    );
     return res.json({
-      success: "message sent"
-    })
+      success: "message sent",
+    });
   }
 
   await adminMessage.create({
     userID: id,
     submitMessage: value,
-  })
+  });
 
   return res.json({
-    success: "message sent"
-  })
-}
+    success: "message sent",
+  });
+};
 
 const deleteChat = async (req, res) => {
   const { id } = req.body;
   const deleted = await chatModel.deleteOne({ _id: id });
   if (deleted) {
     return res.json({
-      success: "Chat Deleted"
-    })
+      success: "Chat Deleted",
+    });
   }
-}
+};
 
 const chatSend = async (req, res) => {
   const { value, from, email } = req.body;
 
   if (!value) {
     return res.json({
-      error: "Message field is required"
-    })
+      error: "Message field is required",
+    });
   }
 
   if (!from) {
     return res.json({
-      error: "unidentified User"
-    })
+      error: "unidentified User",
+    });
   }
 
   if (!email) {
     return res.json({
-      error: "Email Not Found"
-    })
+      error: "Email Not Found",
+    });
   }
   const createNewChat = await chatModel.create({
     from: from,
     email: email,
     message: value,
-    tmp_stp: new Date()
-  })
+    tmp_stp: new Date(),
+  });
 
   if (createNewChat) {
     const chat = await chatModel.find({ email: email });
     return res.json({
-      chat: chat
-    })
+      chat: chat,
+    });
   }
-}
+};
 
 const getAdminChat = async (req, res) => {
   const { email } = req.body;
@@ -284,27 +391,27 @@ const getAdminChat = async (req, res) => {
   const getChat = await chatModel.find({ email: email });
   if (getChat) {
     return res.json({
-      chat: getChat
+      chat: getChat,
     });
   }
 
   res.json({
-    message: "No Chat Available"
-  })
-}
+    message: "No Chat Available",
+  });
+};
 
 const AdminGetCrypto = async (req, res) => {
   const { email } = req.body;
   const ifAdmin = await Admin.findOne({ email: email });
   if (ifAdmin) {
     const bankR = await cryptoModel.find();
-    return res.json(bankR)
+    return res.json(bankR);
   }
 
   return res.json({
-    error: "Unidentify Admin 404"
-  })
-}
+    error: "Unidentify Admin 404",
+  });
+};
 
 const AdminGetBankR = async (req, res) => {
   const { email } = req.body;
@@ -312,24 +419,24 @@ const AdminGetBankR = async (req, res) => {
   const ifAdmin = await Admin.findOne({ email: email });
   if (ifAdmin) {
     const bankR = await bankModel.find();
-    return res.json(bankR)
+    return res.json(bankR);
   }
 
   return res.json({
-    error: "Unidentify Admin 404"
-  })
-}
+    error: "Unidentify Admin 404",
+  });
+};
 
 const getCryptoRecords = async (req, res) => {
   const { email } = req.body;
   const find = await cryptoModel.find({ email: email });
 
   if (find) {
-    return res.json(find)
+    return res.json(find);
   }
 
   return res.json({});
-}
+};
 
 const getBankRecords = async (req, res) => {
   const { email } = req.body;
@@ -337,11 +444,11 @@ const getBankRecords = async (req, res) => {
   const find = await bankModel.find({ email: email });
 
   if (find) {
-    return res.json(find)
+    return res.json(find);
   }
 
   return res.json({});
-}
+};
 
 const getUser = async (req, res) => {
   const { email } = req.body;
@@ -582,6 +689,13 @@ const addBalance = async (req, res) => {
       success: "Profit Balance Added Successfully!",
     });
   }
+
+  if (type == "transaction_fee") {
+    await User.updateOne({ _id: id }, { $set: { transaction_fee: value } });
+    return res.status(200).json({
+      success: "transaction_fee Edited Successfully!",
+    });
+  }
 };
 
 const getUsers = async (req, res) => {
@@ -798,6 +912,7 @@ module.exports = {
   getAdminChat,
   withdrawBank,
   AdminGetBankR,
+  ressetPassword,
   upgradeAccount,
   getAccountLevel,
   getNotification,
@@ -807,4 +922,6 @@ module.exports = {
   getCryptoRecords,
   userNotification,
   notificationAdder,
+  updateAddressInfo,
+  updatePersonalDetails,
 };
