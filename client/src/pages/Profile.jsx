@@ -11,6 +11,8 @@ import DashboardNav from "../components/Nav/DashboardNav";
 const Profile = () => {
   const [user, setUser] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(user?.profile_pic || null);
   const [password, setPassword] = useState({
     current: "",
     newPassword: "",
@@ -41,7 +43,6 @@ const Profile = () => {
 
     const getUser = async () => {
       await axios.post("/getUser", { email }).then((data) => {
-        console.log(data);
         if (data) {
           setUser(data.data);
         }
@@ -219,6 +220,46 @@ const Profile = () => {
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
+      toast.error("Only JPG or PNG images allowed");
+      return;
+    }
+
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("Image size must be less than 3MB");
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const uploadImage = async () => {
+    if (!selectedFile) {
+      toast.error("Choose an image first");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("profile_pic", selectedFile);
+    formData.append("id", id);
+
+    const res = await axios.post("/uploadProfilePic", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    if (res.data.status === "success") {
+      toast.success("Profile picture updated");
+      setPreview(res.data.profile_pic); // base64 returned
+    } else {
+      toast.error(res.data.message);
+    }
+  };
+
   return (
     <div className="d-flex flex-column min-vh-100 dark">
       {/* ---------- HEADER ---------- */}
@@ -273,7 +314,7 @@ const Profile = () => {
                       {/* Avatar */}
                       <div className="text-center mb-4">
                         <Image
-                          src="/placeholder.svg"
+                          src={user && user.profile_pic}
                           roundedCircle
                           width={96}
                           height={96}
@@ -282,9 +323,14 @@ const Profile = () => {
                         <input
                           type="file"
                           className="d-block mx-auto mt-2"
-                          name=""
-                          id=""
+                          onChange={handleFileChange}
                         />
+                        <button
+                          className="btn btn-warning mt-3"
+                          onClick={uploadImage}
+                        >
+                          Upload
+                        </button>
                       </div>
 
                       <Row className="mb-3 g-3">

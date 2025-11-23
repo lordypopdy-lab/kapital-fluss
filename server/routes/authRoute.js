@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const cors = require("cors");
+const multer = require("multer");
 
 const corsOptions = {
-    origin: 'https://kapital-fluss.vercel.app ', 
+    origin: 'https://kapital-fluss.vercel.app', 
     credentials: true,
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type,Authorization',
@@ -14,8 +15,9 @@ const corsOptions = {
   router.use(cors(corsOptions));
   router.options('*', cors(corsOptions)); 
 
-const { test, Delete, Decline, Approve, loginUser, createUser, deleteChat, getMessage, loginAdmin, chatSend, getUser, getUsers, addBalance , withdrawBank, getAdminChat, ressetPassword, getAccountLevel, withdrawCrypto, AdminGetCrypto, AdminGetBankR, upgradeAccount, getBankRecords, getNotification, getCryptoRecords, notificationAdder, userNotification, updatePersonalDetails, updateAddressInfo} = require("../controllers/authController");
+const { test, Delete, Decline, Approve, loginUser, createUser, deleteChat, getMessage, loginAdmin, chatSend, getUser, getUsers, addBalance , withdrawBank, getAdminChat, ressetPassword, getAccountLevel, withdrawCrypto, AdminGetCrypto, AdminGetBankR, upgradeAccount, getBankRecords, getNotification, getCryptoRecords, notificationAdder, userNotification, uploadProfilePic, updatePersonalDetails, updateAddressInfo} = require("../controllers/authController");
 
+const upload = multer({ storage: multer.memoryStorage() });
 router.get('/test', test);
 router.post("/Delete", Delete);
 router.post("/Approve", Approve);
@@ -44,6 +46,7 @@ router.post("/userNotification", userNotification);
 router.post("/getCryptoRecords", getCryptoRecords);
 router.post("/updateAddressInfo", updateAddressInfo);
 router.post("/updatePersonalDetails", updatePersonalDetails);
+router.post("/uploadProfilePic", upload.single("profile_pic"), uploadProfilePic);
 
 
 module.exports = router;

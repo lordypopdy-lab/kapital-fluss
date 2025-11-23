@@ -110,7 +110,7 @@ const bankDeposit = async () => {
                   <Card.Header>
                     <Card.Title>Deposit with Cryptocurrency</Card.Title>
                     <Card.Subtitle className="text-light">
-                      Send crypto directly to your CryptoVest wallet
+                      Send crypto directly to your Crypto wallet
                     </Card.Subtitle>
                   </Card.Header>
                   <Card.Body>

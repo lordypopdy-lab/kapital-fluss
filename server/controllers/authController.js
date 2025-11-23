@@ -10,6 +10,34 @@ const { hashPassword, comparePassword } = require("../helpers/auth");
 
 const mongoose = require("mongoose");
 
+const uploadProfilePic = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!req.file) {
+      return res.json({ status: "error", message: "No image uploaded!" });
+    }
+
+    // Convert buffer → base64
+    const base64Image = req.file.buffer.toString("base64");
+
+    // Add prefix e.g. data:image/png;base64,...
+    const finalImage = `data:${req.file.mimetype};base64,${base64Image}`;
+
+    // Save to DB
+    await User.updateOne({ _id: id }, { profile_pic: finalImage });
+
+    return res.json({
+      status: "success",
+      message: "Profile picture updated successfully",
+      profile_pic: finalImage,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.json({ status: "error", message: "Upload failed!" });
+  }
+};
+
 const ressetPassword = async (req, res) => {
   const { id, current, newPassword } = req.body;
 
@@ -21,21 +49,25 @@ const ressetPassword = async (req, res) => {
 
     const match = await comparePassword(current, user.password);
     if (!match) {
-      return res.json({ status: "error", message: "Current password is incorrect" });
+      return res.json({
+        status: "error",
+        message: "Current password is incorrect",
+      });
     }
 
     const hashedPassword = await hashPassword(newPassword);
 
     await User.updateOne({ _id: id }, { $set: { password: hashedPassword } });
 
-    return res.json({ status: "success", message: "Password updated successfully" });
-
+    return res.json({
+      status: "success",
+      message: "Password updated successfully",
+    });
   } catch (err) {
     console.error(err);
     return res.json({ status: "error", message: "Server error" });
   }
 };
-
 
 const updatePersonalDetails = async (req, res) => {
   const { id, firstName, lastName, email, phoneNumber } = req.body;
@@ -923,5 +955,6 @@ module.exports = {
   userNotification,
   notificationAdder,
   updateAddressInfo,
+  uploadProfilePic,
   updatePersonalDetails,
 };

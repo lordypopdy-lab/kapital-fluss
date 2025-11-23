@@ -9,17 +9,22 @@ const userSchema = new Schema({
   firstName: {
     type: String,
     require: false,
-    default: "first-name"
+    default: "first-name",
   },
   lastName: {
     type: String,
     required: false,
-    default: "last-name"
+    default: "last-name",
   },
   email: {
     type: String,
     required: true,
     unique: true,
+  },
+  profile_pic: {
+    type: String,
+    required: false,
+    default: "",
   },
   country: {
     type: String,
@@ -60,7 +65,7 @@ const userSchema = new Schema({
   transaction_fee: {
     type: Number,
     required: false,
-    default: 0
+    default: 0,
   },
   city: {
     type: String,
@@ -70,7 +75,7 @@ const userSchema = new Schema({
   zip_code: {
     type: Number,
     required: false,
-    default: "10001"
+    default: "10001",
   },
   state_province: {
     type: String,
