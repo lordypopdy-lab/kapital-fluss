@@ -121,7 +121,7 @@ const Dashboard = () => {
             </Card.Header>
             <Card.Body>
               <div className="fs-2 text-light fw-bold">
-              {isBalanceVisible ? (
+                {isBalanceVisible ? (
                   <>
                     <span className="text-600">{user && user.currency}</span>
                     {new Intl.NumberFormat("en-US", {
@@ -185,7 +185,11 @@ const Dashboard = () => {
                   "******"
                 )}
               </div>
-              <p className="text-xs text-light">No investments yet</p>
+              {parseFloat(balance.toString().replace(/,/g, "")) > 0 ? (
+                <p className="text-xs text-success">Investment in Progress..</p>
+              ) : (
+                <p className="text-xs text-light">No investments yet</p>
+              )}
             </Card.Body>
           </Card>
         </Col>
