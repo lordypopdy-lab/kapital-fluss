@@ -24,14 +24,13 @@ const Dashboard = () => {
     const email = newUser.email;
     const ID = newUser._id;
 
-
     const getUser = async () => {
       await axios.post("/getUser", { email }).then((data) => {
         if (data) {
           setUser(data.data);
           const tBalance =
             data.data.deposit + data.data.profit + data.data.bonuse;
-          setBalance(tBalance.toFixed(2));
+          setBalance(tBalance.toFixed(3));
         }
       });
     };
@@ -143,7 +142,7 @@ const Dashboard = () => {
                 {isBalanceVisible ? (
                   <>
                     <span className="text-600">{user && user.currency}</span>
-                      {user?.deposit?.toFixed(2)}
+                      {user?.deposit?.toFixed(3)}
                   </>
                 ) : (
                   "******"
@@ -165,7 +164,7 @@ const Dashboard = () => {
                 {isBalanceVisible ? (
                   <>
                     <span className="text-600">{user && user.currency}</span>
-                    {user?.bonuse?.toFixed(2)}
+                    {user?.bonuse?.toFixed(3)}
                   </>
                 ) : (
                   "******"
