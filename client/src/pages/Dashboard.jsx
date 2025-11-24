@@ -30,7 +30,13 @@ const Dashboard = () => {
           setUser(data.data);
           const tBalance =
             data.data.deposit + data.data.profit + data.data.bonuse;
-          setBalance(tBalance.toFixed(3));
+
+          const formattedBalance = new Intl.NumberFormat("en-US", {
+            minimumFractionDigits: 3,
+            maximumFractionDigits: 3,
+          }).format(tBalance);
+
+          setBalance(formattedBalance);
         }
       });
     };
@@ -142,7 +148,10 @@ const Dashboard = () => {
                 {isBalanceVisible ? (
                   <>
                     <span className="text-600">{user && user.currency}</span>
-                      {user?.deposit?.toFixed(3)}
+                    {new Intl.NumberFormat("en-US", {
+                      minimumFractionDigits: 3,
+                      maximumFractionDigits: 3,
+                    }).format(user?.deposit || 0)}
                   </>
                 ) : (
                   "******"
@@ -164,7 +173,10 @@ const Dashboard = () => {
                 {isBalanceVisible ? (
                   <>
                     <span className="text-600">{user && user.currency}</span>
-                    {user?.bonuse?.toFixed(3)}
+                    {new Intl.NumberFormat("en-US", {
+                      minimumFractionDigits: 3,
+                      maximumFractionDigits: 3,
+                    }).format(user?.bonuse || 0)}
                   </>
                 ) : (
                   "******"
