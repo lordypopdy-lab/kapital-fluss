@@ -31,7 +31,7 @@ const Dashboard = () => {
           setUser(data.data);
           const tBalance =
             data.data.deposit + data.data.profit + data.data.bonuse;
-          setBalance(tBalance.toFixed(3));
+          setBalance(tBalance.toFixed(2));
         }
       });
     };
