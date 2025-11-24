@@ -125,8 +125,8 @@ const Dashboard = () => {
                   <>
                     <span className="text-600">{user && user.currency}</span>
                     {new Intl.NumberFormat("en-US", {
-                      minimumFractionDigits: 3,
-                      maximumFractionDigits: 3,
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
                     }).format(user?.profit || 0)}
                   </>
                 ) : (
@@ -152,8 +152,8 @@ const Dashboard = () => {
                   <>
                     <span className="text-600">{user && user.currency}</span>
                     {new Intl.NumberFormat("en-US", {
-                      minimumFractionDigits: 3,
-                      maximumFractionDigits: 3,
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
                     }).format(user?.deposit || 0)}
                   </>
                 ) : (
@@ -177,8 +177,8 @@ const Dashboard = () => {
                   <>
                     <span className="text-600">{user && user.currency}</span>
                     {new Intl.NumberFormat("en-US", {
-                      minimumFractionDigits: 3,
-                      maximumFractionDigits: 3,
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
                     }).format(user?.bonuse || 0)}
                   </>
                 ) : (
