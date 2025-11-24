@@ -32,8 +32,8 @@ const Dashboard = () => {
             data.data.deposit + data.data.profit + data.data.bonuse;
 
           const formattedBalance = new Intl.NumberFormat("en-US", {
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
           }).format(tBalance);
 
           setBalance(formattedBalance);
