@@ -119,7 +119,7 @@ const Dashboard = () => {
                 {isBalanceVisible ? (
                   <>
                     <span className="text-600">{user?.currency}</span>
-                    {user?.profit?.toFixed(3)}
+                    {user?.profit?.toFixed(2)}
                   </>
                 ) : (
                   "******"
@@ -143,7 +143,7 @@ const Dashboard = () => {
                 {isBalanceVisible ? (
                   <>
                     <span className="text-600">{user && user.currency}</span>
-                      {user?.deposit?.toFixed(3)}
+                      {user?.deposit?.toFixed(2)}
                   </>
                 ) : (
                   "******"
@@ -165,7 +165,7 @@ const Dashboard = () => {
                 {isBalanceVisible ? (
                   <>
                     <span className="text-600">{user && user.currency}</span>
-                    {user?.bonuse?.toFixed(3)}
+                    {user?.bonuse?.toFixed(2)}
                   </>
                 ) : (
                   "******"
