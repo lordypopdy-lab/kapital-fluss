@@ -121,10 +121,13 @@ const Dashboard = () => {
             </Card.Header>
             <Card.Body>
               <div className="fs-2 text-light fw-bold">
-                {isBalanceVisible ? (
+              {isBalanceVisible ? (
                   <>
-                    <span className="text-600">{user?.currency}</span>
-                    {user?.profit?.toFixed(2)}
+                    <span className="text-600">{user && user.currency}</span>
+                    {new Intl.NumberFormat("en-US", {
+                      minimumFractionDigits: 3,
+                      maximumFractionDigits: 3,
+                    }).format(user?.profit || 0)}
                   </>
                 ) : (
                   "******"
