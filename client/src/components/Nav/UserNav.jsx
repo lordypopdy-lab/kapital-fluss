@@ -92,7 +92,7 @@ const UserNav = () => {
                 >
                   <Wallet2 style={{ color: "orange" }} />
                   {wallet ? (
-                    <span>Connected: {wallet.account.address}</span>
+                    <span>Connected: {wallet.account.address.slice(2, 9)}...</span>
                   ) : (
                     <span>Connect Wallet</span>
                   )}
