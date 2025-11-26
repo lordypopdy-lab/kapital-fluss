@@ -16,7 +16,7 @@ import "./index.css"
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-axios.defaults.baseURL = 'https://kapital-fluss-server.vercel.app ';
+axios.defaults.baseURL = 'https://kapital-fluss-server.vercel.app';
 axios.defaults.withCredentials = true;
 
 //http://localhost:8080 

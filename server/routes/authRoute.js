@@ -4,7 +4,7 @@ const cors = require("cors");
 const multer = require("multer");
 
 const corsOptions = {
-    origin: 'https://kapital-fluss.vercel.app ', 
+    origin: 'https://kapital-fluss.vercel.app', 
     credentials: true,
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type,Authorization',
