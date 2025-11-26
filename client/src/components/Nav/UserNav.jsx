@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Container, Button, Image } from "react-bootstrap";
 import {
@@ -44,6 +45,12 @@ const UserNav = () => {
     localStorage.removeItem("user");
     location.href = "/login";
   };
+
+  const copyToClipboard = (walletAddress) => {
+    navigator.clipboard.writeText(walletAddress);
+    toast.success(`Copied!`)
+  };
+
 
   return (
     <Navbar
@@ -92,7 +99,7 @@ const UserNav = () => {
                 >
                   <Wallet2 style={{ color: "orange" }} />
                   {wallet ? (
-                    <span>Connected: {wallet.account.address.slice(2, 9)}...</span>
+                    <span onClick={()=>copyToClipboard(wallet.account.address)}>{wallet.account.address.slice(2, 12)}...</span>
                   ) : (
                     <span>Connect Wallet</span>
                   )}

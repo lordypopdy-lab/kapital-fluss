@@ -33,6 +33,11 @@ const DashboardNav = () => {
     location.href = "/login";
   };
 
+  const copyToClipboard = (walletAddress) => {
+    navigator.clipboard.writeText(walletAddress);
+    toast.success(`Copied!`)
+  };
+
   return (
     <nav className="d-flex bg-black flex-column gap-2 px-3">
       {navItems.map((item) => {
@@ -65,7 +70,7 @@ const DashboardNav = () => {
         >
           <Wallet2 style={{ color: "orange" }} />
           {wallet ? (
-            <span>{wallet.account.address.slice(2, 12)}...</span>
+            <span onClick={()=>copyToClipboard(wallet.account.address)}>{wallet.account.address.slice(2, 12)}...</span>
           ) : (
             <span>Connect Wallet</span>
           )}
