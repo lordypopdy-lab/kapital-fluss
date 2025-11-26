@@ -1,19 +1,22 @@
 import React from "react";
-import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
+import axios from "axios";
 import { Link } from "react-router-dom";
+import { Navbar, Nav, NavDropdown, Container, Button, Image } from "react-bootstrap";
 import {
   User,
   CreditCard,
   Settings,
   LogOut,
   Bitcoin,
-  Contact,
+  UserCheck,
   Wallet2,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
+import { useTonWallet, TonConnectButton } from "@tonconnect/ui-react";
 
 const UserNav = () => {
+  const wallet = useTonWallet();
   const [user, setUser] = useState({});
 
   if (!localStorage.getItem("user")) {
@@ -21,8 +24,20 @@ const UserNav = () => {
   }
 
   useEffect(() => {
-    const getUser = JSON.parse(localStorage.getItem("user"));
-    setUser(getUser);
+    const newU = localStorage.getItem("user");
+    const newUser = JSON.parse(newU);
+    const email = newUser.email;
+    const getU = JSON.parse(localStorage.getItem("user"));
+    setUser(getU);
+
+    const getUser = async () => {
+      await axios.post("/getUser", { email }).then((data) => {
+        if (data) {
+          setUser(data.data);
+        }
+      });
+    };
+    getUser();
   }, []);
 
   const logout = async () => {
@@ -43,10 +58,11 @@ const UserNav = () => {
         >
           <Bitcoin style={{ color: "orange" }} /> Kapital-Fluss
         </h4>
+
         <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll">
+         <Navbar.Collapse id="navbarScroll">
           <Nav
-            className="me-auto my-2 my-lg-0"
+           className="d-block d-md-none"
             style={{ maxHeight: "250px" }}
             navbarScroll
           >
@@ -56,88 +72,51 @@ const UserNav = () => {
             <Nav.Link className="text-light" href="/deposit">
               <Wallet2 className="text-light" /> Deposit
             </Nav.Link>
+            <Nav.Link className="text-light" href="/deposit">
+              <UserCheck className="text-light" /> Profile
+            </Nav.Link>
             <Nav.Link className="text-light" href="/withdraw">
               <CreditCard className="text-light" /> Withdraw
             </Nav.Link>
             <Nav.Link className="text-light" href="/profile">
               <Settings className="text-light" /> Account Settings
             </Nav.Link>
+            <TonConnectButton>
+              <Link to="#" className="text-decoration-none">
+                <Button
+                  variant="secondary"
+                  className="w-100 d-flex align-items-center gap-2 justify-content-start border-0 text-light"
+                  style={{
+                    backgroundColor: "2a2a2a",
+                  }}
+                >
+                  <Wallet2 style={{ color: "orange" }} />
+                  {wallet ? (
+                    <span>Connected: {wallet.account.address}</span>
+                  ) : (
+                    <span>Connect Wallet</span>
+                  )}
+                </Button>
+              </Link>
+            </TonConnectButton> 
             <Nav.Link className="text-light" onClick={logout} href="#">
               <LogOut className="text-danger m-1" />
               Logout
             </Nav.Link>
-            <NavDropdown title="Where to Buy" id="navbarScrollingDropdown">
-              <NavDropdown.Item href="#action3">Where to Buy</NavDropdown.Item>
-              <NavDropdown.Item href="https://bitso.com/">
-                Bitso
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.binance.com/">
-                Binance
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.huobi.com/">
-                Huob
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.okex.com/">
-                Oke_x
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.coinex.com/">
-                CoinEx
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.kucoin.com/">
-                KuCoin
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.bitstamp.net/">
-                Bitstamp
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.luno.com/">
-                Luno
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://remitano.com/">
-                Remitano
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://remitano.com/">
-                Remitano
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.moonpay.com/">
-                Moonpay
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://paxful.com/">
-                Paxful
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.coinbase.com/">
-                CoinBase
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://ramp.network/buy">
-                Ramp
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://openocean.banxa.com/">
-                Banxa
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.chainbits.com/">
-                Chainbits
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="https://www.bitcoin.com/">
-                Bitcoin
-              </NavDropdown.Item>
-            </NavDropdown>
           </Nav>
         </Navbar.Collapse>
+
+
+        <div className="d-none d-md-block">
+        <Image
+          src={user && user.profile_pic}
+          roundedCircle
+          width={46}
+          height={46}
+          className="mb-2"
+          style={{ objectFit: "cover", marginRight: "9px", marginTop: "4px" }}
+        />
+        </div>
       </Container>
     </Navbar>
   );

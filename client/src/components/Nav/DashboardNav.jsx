@@ -6,11 +6,20 @@ import {
   CircleArrowDown,
   CircleArrowUp,
   User,
-  LogOut
+  LogOut,
+  Wallet2,
 } from "lucide-react";
+import { useTonWallet, useTonConnectUI } from "@tonconnect/ui-react";
 
 const DashboardNav = () => {
   const { pathname } = useLocation();
+  const wallet = useTonWallet();
+
+  const [tonConnectUI] = useTonConnectUI();
+
+  const handleConnect = () => {
+    tonConnectUI.connectWallet();
+  };
 
   const navItems = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -21,12 +30,11 @@ const DashboardNav = () => {
 
   const logout = async () => {
     localStorage.removeItem("user");
-    location.href = "/login"
-  }
+    location.href = "/login";
+  };
 
   return (
     <nav className="d-flex bg-black flex-column gap-2 px-3">
-
       {navItems.map((item) => {
         const Icon = item.icon;
         const active = pathname === item.to;
@@ -37,7 +45,7 @@ const DashboardNav = () => {
               variant={active ? "secondary" : "outline-secondary"}
               className="w-100 d-flex align-items-center gap-2 justify-content-start border-0 text-light"
               style={{
-                backgroundColor: active ? "#2a2a2a" : "transparent"
+                backgroundColor: active ? "#2a2a2a" : "transparent",
               }}
             >
               <Icon size={18} />
@@ -46,6 +54,23 @@ const DashboardNav = () => {
           </Link>
         );
       })}
+      <Link to="#" className="text-decoration-none">
+        <Button
+          variant="secondary"
+          onClick={handleConnect}
+          className="w-100 d-flex align-items-center gap-2 justify-content-start border-0 text-light"
+          style={{
+            backgroundColor: "2a2a2a",
+          }}
+        >
+          <Wallet2 style={{ color: "orange" }} />
+          {wallet ? (
+            <span>Connected: {wallet.account.address}</span>
+          ) : (
+            <span>Connect Wallet</span>
+          )}
+        </Button>
+      </Link>
 
       <Link onClick={logout} className="text-decoration-none mt-2">
         <Button
@@ -56,7 +81,6 @@ const DashboardNav = () => {
           Logout
         </Button>
       </Link>
-
     </nav>
   );
 };
