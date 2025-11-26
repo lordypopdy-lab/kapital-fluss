@@ -65,7 +65,7 @@ const DashboardNav = () => {
         >
           <Wallet2 style={{ color: "orange" }} />
           {wallet ? (
-            <span>Connected: {wallet.account.address.slice(2, 8)}...</span>
+            <span>{wallet.account.address.slice(2, 12)}...</span>
           ) : (
             <span>Connect Wallet</span>
           )}
