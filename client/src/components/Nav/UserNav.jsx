@@ -20,7 +20,7 @@ const UserNav = () => {
   const [user, setUser] = useState({});
 
   if (!localStorage.getItem("user")) {
-    window.location.href = "/login-admin";
+    window.location.href = "/login";
   }
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const UserNav = () => {
 
   const logout = async () => {
     localStorage.removeItem("user");
-    location.href = "/login-admin";
+    location.href = "/login";
   };
 
   return (
