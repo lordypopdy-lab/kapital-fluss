@@ -64,7 +64,7 @@ const Dashboard = () => {
           Complete your identity verification to unlock full platform features.
         </span>
         <Button
-        onClick={()=>verifyID}
+        onClick={verifyID}
           style={{ float: "right" }}
           variant="outline"
           size="sm"
