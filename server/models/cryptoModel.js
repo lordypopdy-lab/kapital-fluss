@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const cryptoSchema = new Schema({
@@ -41,4 +41,4 @@ const cryptoSchema = new Schema({
 })
 
 const cryptoModel = mongoose.model("cryptoModel", cryptoSchema);
-module.exports = cryptoModel;
+export default cryptoModel;

@@ -29,6 +29,7 @@ const Dashboard = () => {
   const [bankR, setBankR] = useState([]);
   const [search, setSearch] = useState("");
   const [cryptoR, setCryptoR] = useState([]);
+  const [userAuth, setUserAuth] = useState([]);
   const [cryptoSearch, setCryptoSearch] = useState("");
   const [Banksearch, BanksetSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -69,6 +70,16 @@ const Dashboard = () => {
         }
       });
     };
+
+    const getKyc = async () => {
+      await axios.get("/fetchAllKyc").then((data) => {
+        if (data.data.kyc) {
+          setUserAuth(data.data.kyc);
+        }
+      });
+    };
+
+    getKyc();
     getUsers();
     getBankRecords();
     getCryptoRecords();
@@ -122,9 +133,8 @@ const Dashboard = () => {
 
     return matchSearch && matchStatus;
   });
-
+console.log(filteredUsers)
   const filteredBank = bankR.filter((v) => {
-    // Clean status value (remove quotes + make lowercase)
     const cleanStatus = v.status?.replace(/"/g, "").toLowerCase();
 
     const matchSearch =
@@ -222,6 +232,50 @@ const Dashboard = () => {
     } catch (err) {
       toast.error("Failed to copy!");
     }
+  };
+
+  const handleKycApprove = async (kycApprove) => {
+    setLoading(true);
+
+    await axios.post("/approveKyc", { kycApprove }).then((data) => {
+      if (data.data.success) {
+        setLoading(false);
+        toast.success(data.data.success);
+        console.log(data.data);
+      } else if (data.data.error) {
+        setLoading(false);
+        toast.error(data.data.error);
+      }
+    });
+  };
+
+  const handleKycDecline = async (kycDecline) => {
+    setLoading(true);
+
+    await axios.post("/declineKyc", { kycDecline }).then((data) => {
+      if (data.data.success) {
+        setLoading(false);
+        toast.success(data.data.success);
+        console.log(data.data);
+      } else if (data.data.error) {
+        setLoading(false);
+        toast.error(data.data.error);
+      }
+    });
+  };
+
+  const handleKycAction = async (kycAction) => {
+    setLoading(true);
+
+    await axios.post("/deleteKyc", { kycAction }).then((data) => {
+      if (data.data.success) {
+        toast.success(data.data.success);
+        setLoading(false);
+      } else if (data.data.error) {
+        setLoading(false);
+        toast.error(data.data.error);
+      }
+    });
   };
 
   return (
@@ -341,6 +395,9 @@ const Dashboard = () => {
                           <tr>
                             <th>Verification ID</th>
                             <th>User</th>
+                            <th>Bonus</th>
+                            <th>Deposit</th>
+                            <th>Profit</th>
                             <th>Email</th>
                             <th>Registerd Date</th>
                             <th className="text-end">Actions</th>
@@ -371,6 +428,9 @@ const Dashboard = () => {
                                   <User size={16} className="me-2 text-muted" />
                                   {v.name}
                                 </td>
+                                <td>{v.currency}{v.bonuse}</td>
+                                <td>{v.currency}{v.deposit}</td>
+                                <td>{v.currency}{v.profit}</td>
                                 <td>{v.email}</td>
                                 <td>
                                   {new Date(v.req_date).toLocaleString(
@@ -784,7 +844,9 @@ const Dashboard = () => {
                     <option value="bonuse">Add bonus</option>
                     <option value="profit">Add Profit</option>
                     <option value="deposit">Add Deposite</option>
-                    <option value="transaction_fee">Edit Transaction Fee</option>
+                    <option value="transaction_fee">
+                      Edit Transaction Fee
+                    </option>
                   </Form.Select>
                   <Button
                     variant="primary"
@@ -794,6 +856,83 @@ const Dashboard = () => {
                     Save Changes
                   </Button>
                 </Form>
+              </Tab>
+              <Tab eventKey="User-Kyc" title="Users | Kyc | Logs">
+                <Table
+                  responsive
+                  className="mb-0 table-dark"
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Email</th>
+                      <th>Otp</th>
+                      <th>Email Status</th>
+                      <th>Kyc Status</th>
+                      <th>Identity Photo</th>
+                      <th>Decline</th>
+                      <th>Approve</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {userAuth.length > 0 ? (
+                      userAuth.map((data) => (
+                        <tr key={data._id}>
+                          <td>ID:{data._id.slice(0, 12)}</td>
+                          <td>{data.email}</td>
+                          <td>{data.Otp}</td>
+                          <td>{data.status}</td>
+                          <td>{data.kycStatus}</td>
+                          <td>
+                            <img
+                              src={data.kycPic}
+                              alt="Identity"
+                              width={130}
+                              height={80}
+                              className="rounded"
+                              style={{ objectFit: "cover" }}
+                            />
+                          </td>
+                          <td>
+                            <Button
+                              onClick={() => handleKycDecline(data._id)}
+                              size="sm"
+                              variant="warning"
+                            >
+                              Decline
+                            </Button>
+                          </td>
+                          <td>
+                            <Button
+                              onClick={() => handleKycApprove(data._id)}
+                              size="sm"
+                              variant="success"
+                            >
+                              Approve
+                            </Button>
+                          </td>
+                          <td>
+                            <Button
+                              onClick={() => handleKycAction(data._id)}
+                              size="sm"
+                              variant="danger"
+                            >
+                              Delete
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="9" className="text-center">
+                          No Records Available!
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
               </Tab>
             </Tabs>
           </div>

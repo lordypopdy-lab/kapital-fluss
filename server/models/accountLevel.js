@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const accountUpgradeSchema = new Schema({
@@ -14,4 +14,4 @@ const accountUpgradeSchema = new Schema({
 })
 
 const accountUpgradeModel = mongoose.model("accountLevel", accountUpgradeSchema);
-module.exports = accountUpgradeModel;
+export default accountUpgradeModel;

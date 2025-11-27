@@ -1,14 +1,280 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/userModel");
-const Admin = require("../models/adminModel");
-const bankModel = require("../models/bankModel");
-const chatModel = require("../models/chatModel");
-const cryptoModel = require("../models/cryptoModel");
-const adminMessage = require("../models/adminMessage");
-const accountUpgradeModel = require("../models/accountLevel");
-const { hashPassword, comparePassword } = require("../helpers/auth");
+import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
+import Admin from "../models/adminModel.js";
+import OtpModel from "../models/OtpModel.js";
+import bankModel from "../models/bankModel.js";
+import chatModel from "../models/chatModel.js";
+import cryptoModel from "../models/cryptoModel.js";
+import adminMessage from "../models/adminMessage.js";
+import userInfomation from "../models/userInformation.js";
+import accountUpgradeModel from "../models/accountLevel.js";
 
-const mongoose = require("mongoose");
+import { hashPassword, comparePassword } from "../helpers/auth.js";
+import mongoose from "mongoose";
+
+import { sendEmail } from "../utils/emailService.js";
+
+const DeclineKyc = async (req, res) => {
+  const { kycDecline } = req.body;
+
+  const kycDec = await OtpModel.updateOne({_id: kycDecline}, {$set: {kycStatus: "Declined"}});
+  if(kycDec){
+    return res.json({
+      success: "Kyc Declined Successfully!"
+    })
+  }
+
+  return res.json({
+    error: "Error Declining Kyc"
+  })
+}
+
+const DeleteKyc = async (req, res) => {
+  const { kycAction } = req.body;
+  const deleteAction = await OtpModel.deleteOne({_id: kycAction});
+
+  if(deleteAction){
+    return res.json({
+      success: "Kyc Request deleted succesfully!"
+    })
+  }
+
+  return res.json({
+    error: "Error Deleting Kyc Request"
+  })
+}
+
+const ApproveKyc = async (req, res) => {
+  const { kycApprove } = req.body;
+
+  const kycDec = await OtpModel.updateOne({_id: kycApprove}, {$set: {kycStatus: "Approved"}});
+  if(kycDec){
+    return res.json({
+      success: "Kyc Approved Successfully!"
+    })
+  }
+
+  return res.json({
+    error: "Error Approving Kyc"
+  })
+}
+
+const fetchAllKyc = async (req, res) => {
+  const kyc = await OtpModel.find({});
+  return res.json({
+    kyc: kyc
+  })
+}
+
+const fetchKyc = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.json({
+      error: "Email Required!"
+    })
+  }
+
+  const ifVerifiedOtp = await OtpModel.findOne({ email: email });
+
+  if (ifVerifiedOtp && ifVerifiedOtp.kycStatus === "Verified") {
+    return res.json({
+      status: "Verified"
+    })
+  }
+
+  if (ifVerifiedOtp && ifVerifiedOtp.kycStatus === "Inreview") {
+    return res.json({
+      status: "Inreview"
+    })
+  }
+
+  return res.json({
+    status: "Unverified"
+  })
+}
+
+const fetchOTP = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.json({
+      error: "Email Required!"
+    })
+  }
+
+  const ifVerifiedOtp = await OtpModel.findOne({ email: email });
+
+  if (ifVerifiedOtp && ifVerifiedOtp.status === "Verified") {
+    return res.json({
+      status: "Verified"
+    })
+  }
+
+  return res.json({
+    status: "Unverified"
+  })
+}
+
+const verifyOtp = async (req, res) => {
+  const { otp } = req.body;
+
+  if (!otp) {
+    return res.json({
+      error: "Please Enter OTP Code before submiting!"
+    })
+  }
+
+  const ifCorrect = await OtpModel.findOne({ Otp: otp });
+  if (!ifCorrect) {
+    return res.json({
+      error: "Incorrect OTP, Please Re-Check Yout E-Mail for New OTP"
+    })
+  }
+
+  await OtpModel.updateOne({ Otp: otp }, { $set: { status: "Verified" } });
+  return res.status(200).json({
+    success: "Successfuly Verified OTP"
+  })
+}
+
+const getOTP = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.json({
+      error: "email is required to request for OTP"
+    })
+  }
+
+  // Generate OTP
+  const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
+
+  const otp = generateOTP();
+
+  // Email Template
+  const emailHTML = `
+    <div>
+      <p>Hi <b>${email}</b>,</p>
+      <p>Your verification code is:</p>
+      <h2>${otp}</h2>
+      <p>This code will expire in 15 minutes.</p>
+      <p>If you didn’t request this, ignore the email.</p>
+      <br/>
+      <p>Thanks,</p>
+      <p><b>Your App Team</b></p>
+    </div>
+  `;
+
+  try {
+    // Send using Resend
+    const sent = await sendEmail(email, "Your OTP Code", emailHTML);
+
+    if (!sent) {
+      return res.status(500).json({ error: "Failed to send OTP" });
+    }
+
+    // Save or update OTP in DB
+    const ifExist = await OtpModel.findOne({ email });
+
+    if (ifExist) {
+      await OtpModel.updateOne({ email }, { $set: { Otp: otp } });
+
+      return res.json({
+        message: "OTP Sent Successfully!",
+        OTP: otp,
+      });
+    }
+
+    await OtpModel.create({ email, Otp: otp });
+
+    return res.json({
+      message: "OTP Sent Successfully!",
+      OTP: otp,
+    });
+
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    return res.status(500).json({ error: "Internal error" });
+  }
+};
+
+const citizenId = async (req, res) => {
+  const { email, imgSrc } = req.body;
+
+  const checkIF = await OtpModel.findOne({ email: email });
+
+  if (checkIF) {
+    await OtpModel.updateOne({ email: email }, { $set: {kycStatus: "Inreview", kycPic: imgSrc} });
+    const updateUserPic = await userInfomation.updateOne(
+      { email: email },
+      { $set: { IdProfile: imgSrc } }
+    );
+    const updateUser = await User.updateOne(
+      { email: email },
+      { $set: { citizenId: `${imgSrc}`, verification: `Inreview` } }
+    );
+    if (updateUser && updateUserPic) {
+      return res.json({
+        success: "Success",
+      });
+    }
+  } else {
+    await OtpModel.create({
+      email: email,
+      Otp: "",
+      status: "Unverified",
+      kycStatus: "Inreview",
+      kycPic: imgSrc
+    })
+
+    const updateUserPic = await userInfomation.updateOne(
+      { email: email },
+      { $set: { IdProfile: imgSrc } }
+    );
+    const updateUser = await User.updateOne(
+      { email: email },
+      { $set: { citizenId: `${imgSrc}`, verification: `Inreview` } }
+    );
+    if (updateUser && updateUserPic) {
+      return res.json({
+        success: "Success",
+      });
+    }
+  }
+
+};
+
+const userInfo = async (req, res) => {
+  const { email, Id, Country } = req.body;
+  const check = await userInfomation.findOne({ email });
+  if (check) {
+    const update = await userInfomation.updateOne(
+      { email: email },
+      { $set: { email: `${email}`, Id: `${Id}`, Country: `${Country}` } }
+    );
+    if (update) {
+      return res.json({
+        message: "Updated",
+      });
+    }
+  }
+  const create = await userInfomation.create({
+    email,
+    Id,
+    Country,
+  });
+  if (create) {
+    return res.json({
+      message: "success",
+    });
+  }
+};
+
+/////////////////////////-----GENERAL FUNCTIONALITY SECTION-----///////////////////////////////
+/////////////////////////---------------------------------------///////////////////////////////
+/////////////////////////---------------------------------------///////////////////////////////
+/////////////////////////---------------------------------------///////////////////////////////
 
 const uploadProfilePic = async (req, res) => {
   try {
@@ -927,34 +1193,44 @@ const createUser = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   test,
   Delete,
-  Approve,
-  getUser,
+  getOTP,
   Decline,
-  getUsers,
+  Approve,
   chatSend,
-  deleteChat,
+  getUser,
+  fetchKyc,
+  citizenId,
+  userInfo,
+  getUsers,
+  DeleteKyc,
+  ApproveKyc,
   loginUser,
-  getMessage,
+  fetchOTP,
+  verifyOtp,
+  DeclineKyc,
   createUser,
+  deleteChat,
+  getMessage,
   loginAdmin,
+  fetchAllKyc,
   addBalance,
-  getAdminChat,
   withdrawBank,
-  AdminGetBankR,
+  getAdminChat,
   ressetPassword,
-  upgradeAccount,
   getAccountLevel,
-  getNotification,
-  AdminGetCrypto,
   withdrawCrypto,
+  AdminGetCrypto,
+  AdminGetBankR,
+  upgradeAccount,
   getBankRecords,
+  getNotification,
   getCryptoRecords,
-  userNotification,
   notificationAdder,
-  updateAddressInfo,
+  userNotification,
   uploadProfilePic,
   updatePersonalDetails,
+  updateAddressInfo,
 };
