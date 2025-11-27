@@ -344,6 +344,9 @@ console.log(filteredUsers)
                 <Card className="bg-dark text-light border-secondary">
                   <Card.Header className="d-flex align-items-center justify-content-between bg-black border-secondary">
                     <h5 className="mb-0 text-light">All Users</h5>
+                    <Badge bg="success">
+                     Total Users:{filteredUsers.length}
+                    </Badge>
                   </Card.Header>
 
                   <Card.Body>
