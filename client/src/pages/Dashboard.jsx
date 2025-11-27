@@ -48,6 +48,7 @@ const Dashboard = () => {
   };
 
   const verifyID = async ()=> {
+    console.log("Start Verif")
     location.href = "https://kapital-kyc.vercel.app"
   }
 
