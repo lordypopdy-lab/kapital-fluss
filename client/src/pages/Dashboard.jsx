@@ -42,9 +42,14 @@ const Dashboard = () => {
     };
     getUser();
   }, []);
+
   const toggleBalanceVisibility = () => {
     setIsBalanceVisible((prev) => !prev);
   };
+
+  const verifyID = async ()=> {
+    location.href = "https://kapital-kyc.vercel.app"
+  }
 
   return (
     <Container fluid className="d-flex flex-column gap-4">
@@ -59,6 +64,7 @@ const Dashboard = () => {
           Complete your identity verification to unlock full platform features.
         </span>
         <Button
+        onClick={()=>verifyID}
           style={{ float: "right" }}
           variant="outline"
           size="sm"
