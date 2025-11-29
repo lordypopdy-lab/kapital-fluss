@@ -3,9 +3,11 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Deposit from "./pages/Deposit";
+import ChatPage from "./pages/ChatPage";
 import Withdraw from "./pages/Withdraw";
 import Dashboard from "./admin/Dashboard";
 import LoginAdmin from "./admin/LoginAdmin";
+import AdminChatPage from "./admin/AdminChatPage";
 import DashboardLayout from "./components/Nav/DashboardLayout";
 
 import axios from 'axios';
@@ -31,12 +33,14 @@ function App() {
         <Route index="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/chat" element={<ChatPage />} />
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/deposit" element={<Deposit />} />
         <Route path="/withdraw" element={<Withdraw />} />
         <Route path="/login-admin" element={<LoginAdmin />} />
         <Route path="/dashboard" element={<DashboardLayout />} />
+        <Route path="/admin-chat-page" element={<AdminChatPage />} />
       </Routes>
     </Router>
   </>

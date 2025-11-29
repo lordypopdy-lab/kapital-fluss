@@ -11,6 +11,7 @@ import {
   Bitcoin,
   UserCheck,
   Wallet2,
+  MessageCircle,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -84,6 +85,9 @@ const UserNav = () => {
             </Nav.Link>
             <Nav.Link className="text-light" href="/withdraw">
               <CreditCard className="text-light" /> Withdraw
+            </Nav.Link>
+            <Nav.Link className="text-light" href="/chat">
+              <MessageCircle className="text-light" /> Chat
             </Nav.Link>
             <Nav.Link className="text-light" href="/profile">
               <Settings className="text-light" /> Account Settings

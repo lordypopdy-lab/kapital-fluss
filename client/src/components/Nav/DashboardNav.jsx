@@ -8,6 +8,7 @@ import {
   CircleArrowUp,
   User,
   LogOut,
+  MessageCircle,
   Wallet2,
 } from "lucide-react";
 import { useTonWallet, useTonConnectUI } from "@tonconnect/ui-react";
@@ -26,6 +27,7 @@ const DashboardNav = () => {
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/deposit", label: "Deposit", icon: CircleArrowDown },
     { to: "/withdraw", label: "Withdraw", icon: CircleArrowUp },
+    { to: "/chat", label: "Chat", icon: MessageCircle },
     { to: "/profile", label: "Profile", icon: User },
   ];
 

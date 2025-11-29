@@ -27,6 +27,11 @@ import {
   fetchAllKyc,
   addBalance,
   withdrawBank,
+  sendMessage,
+  getMessages,
+  deleteMessage,
+  adminReply,
+  deleteUser,
   getAdminChat,
   ressetPassword,
   getAccountLevel,
@@ -41,7 +46,7 @@ import {
   userNotification,
   uploadProfilePic,
   updatePersonalDetails,
-  updateAddressInfo
+  updateAddressInfo,
 } from "../controllers/authController.js";
 
 const router = express.Router();
@@ -58,7 +63,7 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true); 
+    if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -80,7 +85,7 @@ router.post("/Delete", Delete);
 router.post("/Approve", Approve);
 router.post("/Decline", Decline);
 router.post("/getUser", getUser);
-router.post("/getOTP", getOTP); 
+router.post("/getOTP", getOTP);
 router.get("/getUsers", getUsers);
 router.post("/login", loginUser);
 router.post("/chatSend", chatSend);
@@ -91,6 +96,11 @@ router.post("/declineKyc", DeclineKyc);
 router.post("/userInfo", userInfo);
 router.post("/fetchOTP", fetchOTP);
 router.post("/fetchKyc", fetchKyc);
+router.post("/send", sendMessage);
+router.post("/deleteUser", deleteUser);
+router.get("/chat/:userId", getMessages);
+router.delete("/delete/:id", deleteMessage);
+router.post("/admin-reply", adminReply);
 router.post("/verifyOtp", verifyOtp);
 router.get("/fetchAllKyc", fetchAllKyc);
 router.post("/register", createUser);
@@ -113,6 +123,10 @@ router.post("/userNotification", userNotification);
 router.post("/getCryptoRecords", getCryptoRecords);
 router.post("/updateAddressInfo", updateAddressInfo);
 router.post("/updatePersonalDetails", updatePersonalDetails);
-router.post("/uploadProfilePic", upload.single("profile_pic"), uploadProfilePic);
+router.post(
+  "/uploadProfilePic",
+  upload.single("profile_pic"),
+  uploadProfilePic
+);
 
 export default router;

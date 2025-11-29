@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import Chat from "../models/Chat.js";
 import User from "../models/userModel.js";
 import Admin from "../models/adminModel.js";
 import OtpModel from "../models/OtpModel.js";
@@ -13,6 +14,101 @@ import { hashPassword, comparePassword } from "../helpers/auth.js";
 import mongoose from "mongoose";
 
 import { sendEmail } from "../utils/emailService.js";
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { userID } = req.body;
+
+    const deletedUser = await User.findByIdAndDelete(userID);
+
+    if (!deletedUser) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
+
+    res.json({ success: true, msg: "User deleted successfully" });
+  } catch (error) {
+    console.error("Delete Error:", error);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+
+export const sendMessage = async (req, res) => {
+  try {
+    const { sender, receiver, message } = req.body;
+
+    if (!sender || !receiver || !message) {
+      return res.status(400).json({ error: "sender, receiver, message are required" });
+    }
+
+    const newMsg = new Chat({
+      sender,
+      receiver,
+      message,
+    });
+
+    await newMsg.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Message sent successfully",
+      data: newMsg,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const getMessages = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const msgs = await Chat.find({
+      $or: [{ sender: userId }, { receiver: userId }],
+    }).sort({ time: 1 });
+
+    res.status(200).json(msgs);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const deleteMessage = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await Chat.findByIdAndDelete(id);
+
+    res.json({ success: true, msg: "Message deleted" });
+  } catch (error) {
+    console.error("Delete Error:", error);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+
+export const adminReply = async (req, res) => {
+  try {
+    const { userId, message } = req.body;
+
+    if (!message || !userId) {
+      return res.status(400).json({ msg: "Missing fields" });
+    }
+
+    const adminMsg = await Chat.create({
+      userId,
+      sender: "admin",
+      message,
+    });
+
+    res.status(201).json({ success: true, chat: adminMsg });
+  } catch (error) {
+    console.error("Admin Reply Error:", error);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
 
 const DeclineKyc = async (req, res) => {
   const { kycDecline } = req.body;

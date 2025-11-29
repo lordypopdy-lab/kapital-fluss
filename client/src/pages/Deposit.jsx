@@ -30,6 +30,9 @@ const Deposit = () => {
     usdt: "TG2mu1G75JW8KsqvBjbxWPNxxrb8ni7CAk",
   };
 
+  if (!localStorage.getItem("user")) {
+    window.location.href = "/login";
+  }
 
   useEffect(()=>{
 

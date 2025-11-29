@@ -119,7 +119,7 @@ const Dashboard = () => {
   };
 
   const message = async () => {
-    toast.success("Message function coming soon!");
+    location.href = "/admin-chat-page";
   };
 
   const filteredUsers = users.filter((v) => {
@@ -278,6 +278,25 @@ console.log(filteredUsers)
     });
   };
 
+  const deleteUser = async (userID) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.post("/deleteUser", { userID });
+      
+      if (data.success) {
+        toast.success(data.msg);
+      } else {
+        toast.error(data.error || "Failed to delete user");
+      }
+    } catch (error) {
+      console.error("Delete user error:", error);
+      toast.error("Server error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
   return (
     <div
       className="d-flex flex-column min-vh-100 dark"
@@ -404,6 +423,7 @@ console.log(filteredUsers)
                             <th>Email</th>
                             <th>Registerd Date</th>
                             <th className="text-end">Actions</th>
+                            <th className="text-end">Actions</th>
                           </tr>
                         </thead>
 
@@ -453,6 +473,14 @@ console.log(filteredUsers)
                                     <Button size="sm" variant="outline-success">
                                       <FileText size={16} className="me-1" />{" "}
                                       Message
+                                    </Button>
+                                  </Link>
+                                </td>
+                                <td className="text-end">
+                                  <Link onClick={()=>deleteUser(v._id)}>
+                                    <Button size="sm" variant="outline-danger">
+                                      <FileText size={16} className="me-1" />{" "}
+                                      Delete
                                     </Button>
                                   </Link>
                                 </td>
