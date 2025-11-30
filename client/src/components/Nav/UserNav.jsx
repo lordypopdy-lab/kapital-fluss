@@ -2,7 +2,14 @@ import React from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import { Navbar, Nav, NavDropdown, Container, Button, Image } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  NavDropdown,
+  Container,
+  Button,
+  Image,
+} from "react-bootstrap";
 import {
   User,
   CreditCard,
@@ -11,6 +18,7 @@ import {
   Bitcoin,
   UserCheck,
   Wallet2,
+  UserCheck2,
   MessageCircle,
 } from "lucide-react";
 
@@ -20,6 +28,7 @@ import { useTonWallet, TonConnectButton } from "@tonconnect/ui-react";
 const UserNav = () => {
   const wallet = useTonWallet();
   const [user, setUser] = useState({});
+  const [userVerification, setVerificationStatus] = useState({});
 
   if (!localStorage.getItem("user")) {
     window.location.href = "/login";
@@ -40,6 +49,20 @@ const UserNav = () => {
       });
     };
     getUser();
+
+    const getUserVerification = async () => {
+      try {
+        const response = await axios.post("/getUserVerification", { email });
+
+        if (response.data.status === "success") {
+          console.log("User verification:", response.data.data);
+          setVerificationStatus(response.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getUserVerification();
   }, []);
 
   const logout = async () => {
@@ -49,9 +72,8 @@ const UserNav = () => {
 
   const copyToClipboard = (walletAddress) => {
     navigator.clipboard.writeText(walletAddress);
-    toast.success(`Copied!`)
+    toast.success(`Copied!`);
   };
-
 
   return (
     <Navbar
@@ -68,19 +90,36 @@ const UserNav = () => {
         </h4>
 
         <Navbar.Toggle aria-controls="navbarScroll" />
-         <Navbar.Collapse id="navbarScroll">
+        <Navbar.Collapse id="navbarScroll">
           <Nav
-           className="d-block d-md-none"
+            className="d-block d-md-none"
             style={{ maxHeight: "250px" }}
             navbarScroll
           >
+            {userVerification.kycStatus === "Approved" ? (
+              <Nav.Link className="text-success" href="/dashboard">
+                Verified
+                <UserCheck2
+                  style={{ marginBottom: "9px", marginLeft: "3px" }}
+                  className="text-success"
+                />
+              </Nav.Link>
+            ) : userVerification.kycStatus === "Inreview" ? (
+              <Nav.Link className="text-warning" href="/dashboard">
+              Inreview
+            </Nav.Link>
+            ) : (
+              <Nav.Link className="text-danger" href="/dashboard">
+              Unverified
+            </Nav.Link>
+            )}
             <Nav.Link className="text-light" href="/dashboard">
               <User className="text-light" /> Dashboard
             </Nav.Link>
             <Nav.Link className="text-light" href="/deposit">
               <Wallet2 className="text-light" /> Deposit
             </Nav.Link>
-            <Nav.Link className="text-light" href="/deposit">
+            <Nav.Link className="text-light" href="/profile">
               <UserCheck className="text-light" /> Profile
             </Nav.Link>
             <Nav.Link className="text-light" href="/withdraw">
@@ -103,13 +142,17 @@ const UserNav = () => {
                 >
                   <Wallet2 style={{ color: "orange" }} />
                   {wallet ? (
-                    <span onClick={()=>copyToClipboard(wallet.account.address)}>{wallet.account.address.slice(2, 12)}...</span>
+                    <span
+                      onClick={() => copyToClipboard(wallet.account.address)}
+                    >
+                      {wallet.account.address.slice(2, 12)}...
+                    </span>
                   ) : (
                     <span>Connect Wallet</span>
                   )}
                 </Button>
               </Link>
-            </TonConnectButton> 
+            </TonConnectButton>
             <Nav.Link className="text-light" onClick={logout} href="#">
               <LogOut className="text-danger m-1" />
               Logout
@@ -117,16 +160,15 @@ const UserNav = () => {
           </Nav>
         </Navbar.Collapse>
 
-
         <div className="d-none d-md-block">
-        <Image
-          src={user && user.profile_pic}
-          roundedCircle
-          width={46}
-          height={46}
-          className="mb-2"
-          style={{ objectFit: "cover", marginRight: "9px", marginTop: "4px" }}
-        />
+          <Image
+            src={user && user.profile_pic}
+            roundedCircle
+            width={46}
+            height={46}
+            className="mb-2"
+            style={{ objectFit: "cover", marginRight: "9px", marginTop: "4px" }}
+          />
         </div>
       </Container>
     </Navbar>

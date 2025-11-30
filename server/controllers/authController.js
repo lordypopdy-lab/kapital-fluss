@@ -15,6 +15,30 @@ import mongoose from "mongoose";
 
 import { sendEmail } from "../utils/emailService.js";
 
+export const getUserVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const otpStatus = await OtpModel.findOne({ email });
+
+    if (!otpStatus) {
+      return res.json({
+        status: "failed",
+        message: "No record found",
+      });
+    }
+
+    return res.json({
+      status: "success",
+      data: otpStatus,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ status: "error", message: "Server error" });
+  }
+};
+
+
 export const deleteUser = async (req, res) => {
   try {
     const { userID } = req.body;

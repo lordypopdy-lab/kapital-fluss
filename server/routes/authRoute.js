@@ -45,6 +45,7 @@ import {
   notificationAdder,
   userNotification,
   uploadProfilePic,
+  getUserVerification,
   updatePersonalDetails,
   updateAddressInfo,
 } from "../controllers/authController.js";
@@ -122,6 +123,7 @@ router.post("/getNotification", getNotification);
 router.post("/userNotification", userNotification);
 router.post("/getCryptoRecords", getCryptoRecords);
 router.post("/updateAddressInfo", updateAddressInfo);
+router.post("/getUserVerification", getUserVerification);
 router.post("/updatePersonalDetails", updatePersonalDetails);
 router.post(
   "/uploadProfilePic",

@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [balance, setBalance] = useState(0);
   const [user, setUser] = useState([]);
   const [isBalanceVisible, setIsBalanceVisible] = useState(true);
+  const [userVerification, setVerificationStatus] = useState({});
 
   if (!localStorage.getItem("user")) {
     window.location.href = "/login";
@@ -41,39 +42,79 @@ const Dashboard = () => {
       });
     };
     getUser();
+
+    const getUserVerification = async () => {
+      try {
+        const response = await axios.post("/getUserVerification", { email });
+
+        if (response.data.status === "success") {
+          console.log("User verification:", response.data.data);
+          setVerificationStatus(response.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getUserVerification();
   }, []);
 
   const toggleBalanceVisibility = () => {
     setIsBalanceVisible((prev) => !prev);
   };
 
-  const verifyID = async ()=> {
-    console.log("Start Verif")
-    location.href = "https://kapital-kyc.vercel.app"
-  }
+  const verifyID = async () => {
+    console.log("Start Verif");
+    location.href = "https://kapital-kyc.vercel.app";
+  };
 
   return (
     <Container fluid className="d-flex flex-column gap-4">
       <Widget102 />
 
       {/* KYC ALERT */}
-      <div className="alert alert-warning p-2" role="alert">
-        <h6 className="text-warning fw-bold mb-1">
-          <Check /> Identity Verification Required
-        </h6>
-        <span className="bitradex-text-muted">
-          Complete your identity verification to unlock full platform features.
-        </span>
-        <Button
-        onClick={verifyID}
-          style={{ float: "right" }}
-          variant="outline"
-          size="sm"
-          className="btn btn-danger"
-        >
-          Verify Now
-        </Button>
-      </div>
+
+      {userVerification.kycStatus === "Approved" ? (
+        ""
+      ) : userVerification.kycStatus === "Inreview" ? (
+        <div className="alert alert-warning p-2" role="alert">
+          <h6 className="text-warning fw-bold mb-1">
+            <Check /> Identity Verification Required
+          </h6>
+          <span className="bitradex-text-muted">
+            Complete your identity verification to unlock full platform
+            features.
+          </span>
+          <Button
+            onClick={verifyID}
+            style={{ float: "right" }}
+            variant="outline"
+            size="sm"
+            className="btn btn-primary"
+          >
+            Data Inreview!
+          </Button>
+        </div>
+      ) : (
+        <div className="alert alert-warning p-2" role="alert">
+          <h6 className="text-warning fw-bold mb-1">
+            <Check /> Identity Verification Required
+          </h6>
+          <span className="bitradex-text-muted">
+            Complete your identity verification to unlock full platform
+            features.
+          </span>
+          <Button
+            onClick={verifyID}
+            style={{ float: "right" }}
+            variant="outline"
+            size="sm"
+            className="btn btn-danger"
+          >
+            Verify Now
+          </Button>
+        </div>
+      )}
+
       {/* BALANCE CARDS */}
       <Row className="g-4">
         <Col md={6} lg={3}>
