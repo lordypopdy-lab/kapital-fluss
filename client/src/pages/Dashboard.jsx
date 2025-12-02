@@ -316,7 +316,8 @@ const Dashboard = () => {
             </Card.Header>
 
             <Card.Body>
-              <Tabs style={{ maxWidth: "320px", overflowY: "auto" }} defaultActiveKey="all" className="mb-3">
+              <Tabs defaultActiveKey="all" className="mb-3">
+                {/* ALL COINS */}
                 <Tab eventKey="all" title="All Coins">
                   <div className="row text-sm text-light fw-medium py-2">
                     <div className="col">Coin</div>
