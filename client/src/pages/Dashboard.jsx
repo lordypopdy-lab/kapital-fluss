@@ -68,6 +68,8 @@ const Dashboard = () => {
         const msg = JSON.parse(event.data);
         const symbol = msg.symbol?.toUpperCase();
         if (!symbol) return;
+
+        console.log(msg)
   
         setPricesTicker((prev) => ({
           ...prev,
