@@ -26,28 +26,28 @@ const Dashboard = () => {
     const newUser = JSON.parse(newU);
     const email = newUser.email;
     const ID = newUser._id;
-
+  
     const getUser = async () => {
       await axios.post("/getUser", { email }).then((data) => {
         if (data) {
           setUser(data.data);
           const tBalance =
             data.data.deposit + data.data.profit + data.data.bonuse;
-
+  
           const formattedBalance = new Intl.NumberFormat("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }).format(tBalance);
-
+  
           setBalance(formattedBalance);
         }
       });
     };
-
+  
     const getUserVerification = async () => {
       try {
         const response = await axios.post("/getUserVerification", { email });
-
+  
         if (response.data.status === "success") {
           console.log("User verification:", response.data.data);
           setVerificationStatus(response.data.data);
@@ -56,45 +56,47 @@ const Dashboard = () => {
         console.log(error);
       }
     };
-
-    const FavTokens = async () => {
-      const socketTcker = new WebSocket("wss://your-render-app.onrender.com/ws/markPrice");
-
-      socketTcker.onopen = () => {
-          console.log('✅ Ticker WebSocket connected')
-      }
-
-      socketTcker.onmessage = (event) => {
-          const msg = JSON.parse(event.data);
-          const symbol = msg.symbol?.toUpperCase();
-
-          console.log(msg);
-
-          if (!symbol) return;
-
-          //console.log(msg)
-          setPricesTicker((prev) => ({
-              ...prev,
-              [symbol]: {
-                  ...prev[symbol],
-                  ...msg
-              },
-          }))
-      }
-
-      socketTcker.onerror = ((err) => {
-          console.error('❌ Ticker WebSocket error:', err);
-      })
-
-      socketTcker.onclose = () => {
-          console.warn('🔌 Ticker WebSocket disconnected');
-      }
-      return () => socketTcker.close();
-  }
-  getUser();
-  FavTokens();
-  getUserVerification();
+  
+    const FavTokens = () => {
+      const socket = new WebSocket("wss://bitclub.onrender.com/ws/ticker");
+  
+      socket.onopen = () => {
+        console.log("✅ MarkPrice WebSocket connected");
+      };
+  
+      socket.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        const symbol = msg.symbol?.toUpperCase();
+        if (!symbol) return;
+  
+        setPricesTicker((prev) => ({
+          ...prev,
+          [symbol]: {
+            ...(prev[symbol] || {}),
+            ...msg,
+          },
+        }));
+      };
+  
+      socket.onerror = (err) => {
+        console.error("❌ MarkPrice WebSocket error:", err);
+      };
+  
+      socket.onclose = () => {
+        console.warn("🔌 MarkPrice WebSocket disconnected");
+      };
+  
+      return () => socket.close();
+    };
+  
+    getUser();
+    getUserVerification();
+  
+    const cleanup = FavTokens();
+  
+    return cleanup;
   }, []);
+  
 
   const toggleBalanceVisibility = () => {
     setIsBalanceVisible((prev) => !prev);
