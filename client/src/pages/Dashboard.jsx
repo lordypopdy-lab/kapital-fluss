@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 
-import { Card, Button, Row, Col, Tabs, Tab, Container } from "react-bootstrap";
+import { Card, Button, Row, Col, Tabs, Tab, Container, Table } from "react-bootstrap";
 import { DollarSign, Bitcoin, Coins, LineChart, Check } from "lucide-react";
 
 import Widget102 from "../components/Widget102";
@@ -293,34 +293,64 @@ const Dashboard = () => {
         </Col>
       </Row>
 
-      {/* MARKET OVERVIEW + GETTING STARTED */}
       <Row className="g-4">
-        <Col lg={7}>
-          <Card className="bg-black shadow">
-            <Card.Header>
-              <h5
-                style={{ borderBottom: "5px solid orange", width: "200px" }}
-                className="mb-0 text-light"
-              >
-                Market Overview
-              </h5>
-            </Card.Header>
+  {/* LEFT COLUMN: Market Overview */}
+  <Col xs={12} md={12} lg={7}>
+    <Card className="bg-black shadow">
+      <Card.Header>
+        <h5
+          style={{ borderBottom: "5px solid orange", width: "320px" }}
+          className="mb-0 text-light"
+        >
+          Market Overview
+        </h5>
+      </Card.Header>
 
-            <Card.Body>
-              <Tabs defaultActiveKey="all" className="mb-3">
-                {/* ALL COINS */}
-                <Tab eventKey="all" title="All Coins">
-                  <div className="row text-sm text-light fw-medium py-2">
-                    <div className="col">Coin</div>
-                    <div className="col text-end text-light">Price</div>
-                    <div className="col text-end text-light">24h Change</div>
-                    <div className="col text-end text-light">Volume</div>
-                  </div>
-
-                  <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+      <Card.Body>
+        <Tabs defaultActiveKey="all" className="mb-3" fill>
+          {["all", "trending", "gainers", "losers"].map((tabKey) => (
+            <Tab
+              eventKey={tabKey}
+              title={tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}
+              key={tabKey}
+            >
+              <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                <Table
+                  striped
+                  hover
+                  responsive
+                  className="text-light mb-0"
+                  variant="dark"
+                >
+                  <thead className="text-light">
+                    <tr>
+                      <th>Coin</th>
+                      <th className="text-end">Price</th>
+                      <th className="text-end">24h Change</th>
+                      <th className="text-end">Volume</th>
+                    </tr>
+                  </thead>
+                  <tbody>
                     {Object.keys(pricesTicker)
-                      .sort()
-                      .slice(0, 50) // load first 50 coins max
+                      .sort((a, b) => {
+                        if (tabKey === "gainers")
+                          return (
+                            parseFloat(pricesTicker[b].priceChangePercent) -
+                            parseFloat(pricesTicker[a].priceChangePercent)
+                          );
+                        if (tabKey === "losers")
+                          return (
+                            parseFloat(pricesTicker[a].priceChangePercent) -
+                            parseFloat(pricesTicker[b].priceChangePercent)
+                          );
+                        if (tabKey === "trending")
+                          return (
+                            parseFloat(pricesTicker[b].volume) -
+                            parseFloat(pricesTicker[a].volume)
+                          );
+                        return a.localeCompare(b); // all
+                      })
+                      .slice(tabKey === "all" ? 50 : 10)
                       .map((symbol) => {
                         const coin = pricesTicker[symbol];
                         if (!coin) return null;
@@ -336,294 +366,116 @@ const Dashboard = () => {
                         const volume = parseFloat(coin.volume).toLocaleString();
 
                         return (
-                          <div key={symbol} className="row py-2">
-                            <div className="col d-flex text-light align-items-center">
+                          <tr key={symbol}>
+                            <td className="d-flex align-items-center">
                               <Coins
                                 className="me-2 h-4 w-4"
                                 style={{ color: "orange" }}
                               />
                               {symbol.toUpperCase()}
-                            </div>
-                            <div className="col text-end text-light">
-                              ${price}
-                            </div>
-                            <div
-                              className={`col text-end ${
+                            </td>
+                            <td className="text-end">${price}</td>
+                            <td
+                              className={`text-end ${
                                 isPositive ? "text-success" : "text-danger"
                               }`}
                             >
                               {isPositive ? "+" : "-"}
                               {Math.abs(changePercent).toFixed(2)}%
-                            </div>
-                            <div className="col text-end text-light">
-                              {volume}
-                            </div>
-                          </div>
+                            </td>
+                            <td className="text-end">{volume}</td>
+                          </tr>
                         );
                       })}
-                  </div>
-                </Tab>
-
-                {/* TRENDING */}
-                <Tab eventKey="trending" title="Trending">
-                  <div className="row text-sm text-light fw-medium py-2">
-                    <div className="col">Coin</div>
-                    <div className="col text-end text-light">Price</div>
-                    <div className="col text-end text-light">24h Change</div>
-                    <div className="col text-end text-light">Volume</div>
-                  </div>
-
-                  <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-                    {Object.keys(pricesTicker)
-                      .sort(
-                        (a, b) =>
-                          parseFloat(pricesTicker[b].volume) -
-                          parseFloat(pricesTicker[a].volume)
-                      )
-                      .slice(0, 10) // top 10 trending
-                      .map((symbol) => {
-                        const coin = pricesTicker[symbol];
-                        if (!coin) return null;
-
-                        const price = parseFloat(coin.lastPrice).toLocaleString(
-                          undefined,
-                          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-                        );
-                        const changePercent = parseFloat(
-                          coin.priceChangePercent
-                        );
-                        const isPositive = changePercent >= 0;
-                        const volume = parseFloat(coin.volume).toLocaleString();
-
-                        return (
-                          <div key={symbol} className="row py-2">
-                            <div className="col d-flex text-light align-items-center">
-                              <Coins
-                                className="me-2 h-4 w-4"
-                                style={{ color: "orange" }}
-                              />
-                              {symbol.toUpperCase()}
-                            </div>
-                            <div className="col text-end text-light">
-                              ${price}
-                            </div>
-                            <div
-                              className={`col text-end ${
-                                isPositive ? "text-success" : "text-danger"
-                              }`}
-                            >
-                              {isPositive ? "+" : "-"}
-                              {Math.abs(changePercent).toFixed(2)}%
-                            </div>
-                            <div className="col text-end text-light">
-                              {volume}
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </Tab>
-
-                {/* GAINERS */}
-                <Tab eventKey="gainers" title="Gainers">
-                  <div className="row text-sm text-light fw-medium py-2">
-                    <div className="col">Coin</div>
-                    <div className="col text-end text-light">Price</div>
-                    <div className="col text-end text-light">24h Change</div>
-                    <div className="col text-end text-light">Volume</div>
-                  </div>
-
-                  <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-                    {Object.keys(pricesTicker)
-                      .sort(
-                        (a, b) =>
-                          parseFloat(pricesTicker[b].priceChangePercent) -
-                          parseFloat(pricesTicker[a].priceChangePercent)
-                      )
-                      .slice(0, 10) // top 10 gainers
-                      .map((symbol) => {
-                        const coin = pricesTicker[symbol];
-                        if (!coin) return null;
-
-                        const price = parseFloat(coin.lastPrice).toLocaleString(
-                          undefined,
-                          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-                        );
-                        const changePercent = parseFloat(
-                          coin.priceChangePercent
-                        );
-                        const isPositive = changePercent >= 0;
-                        const volume = parseFloat(coin.volume).toLocaleString();
-
-                        return (
-                          <div key={symbol} className="row py-2">
-                            <div className="col d-flex text-light align-items-center">
-                              <Coins
-                                className="me-2 h-4 w-4"
-                                style={{ color: "orange" }}
-                              />
-                              {symbol.toUpperCase()}
-                            </div>
-                            <div className="col text-end text-light">
-                              ${price}
-                            </div>
-                            <div
-                              className={`col text-end ${
-                                isPositive ? "text-success" : "text-danger"
-                              }`}
-                            >
-                              {isPositive ? "+" : "-"}
-                              {Math.abs(changePercent).toFixed(2)}%
-                            </div>
-                            <div className="col text-end text-light">
-                              {volume}
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </Tab>
-
-                {/* LOSERS */}
-                <Tab eventKey="losers" title="Losers">
-                  <div className="row text-sm text-light fw-medium py-2">
-                    <div className="col">Coin</div>
-                    <div className="col text-end text-light">Price</div>
-                    <div className="col text-end text-light">24h Change</div>
-                    <div className="col text-end text-light">Volume</div>
-                  </div>
-
-                  <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-                    {Object.keys(pricesTicker)
-                      .sort(
-                        (a, b) =>
-                          parseFloat(pricesTicker[a].priceChangePercent) -
-                          parseFloat(pricesTicker[b].priceChangePercent)
-                      )
-                      .slice(0, 10) // top 10 losers
-                      .map((symbol) => {
-                        const coin = pricesTicker[symbol];
-                        if (!coin) return null;
-
-                        const price = parseFloat(coin.lastPrice).toLocaleString(
-                          undefined,
-                          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-                        );
-                        const changePercent = parseFloat(
-                          coin.priceChangePercent
-                        );
-                        const isPositive = changePercent >= 0;
-                        const volume = parseFloat(coin.volume).toLocaleString();
-
-                        return (
-                          <div key={symbol} className="row py-2">
-                            <div className="col d-flex text-light align-items-center">
-                              <Coins
-                                className="me-2 h-4 w-4"
-                                style={{ color: "orange" }}
-                              />
-                              {symbol.toUpperCase()}
-                            </div>
-                            <div className="col text-end text-light">
-                              ${price}
-                            </div>
-                            <div
-                              className={`col text-end ${
-                                isPositive ? "text-success" : "text-danger"
-                              }`}
-                            >
-                              {isPositive ? "+" : "-"}
-                              {Math.abs(changePercent).toFixed(2)}%
-                            </div>
-                            <div className="col text-end text-light">
-                              {volume}
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </Tab>
-              </Tabs>
-            </Card.Body>
-          </Card>
-        </Col>
-
-        <Col lg={5}>
-          {/* GETTING STARTED CARD */}
-          <Card className="bg-black shadow-light">
-            <Card.Header>
-              <h5
-                style={{ borderBottom: "5px solid orange", width: "200px" }}
-                className="mb-2 text-light"
-              >
-                Getting Started
-              </h5>
-              <p className="text-light small">
-                Steps to begin your investment journey
-              </p>
-            </Card.Header>
-
-            <Card.Body>
-              {/* Steps Content */}
-              <div className="rounded border p-3 mb-3">
-                <div className="d-flex align-items-center">
-                  <div className="w-6 h-6 rounded-circle bg-bitradex-orange text-white d-flex justify-content-center align-items-center small text-light fw-bold">
-                    ✔
-                  </div>
-                  <h6 className="ms-2 mb-0 text-sm text-light fw-medium">
-                    Complete Your Profile
-                  </h6>
-                </div>
-                <p className="mt-2 text-xs text-light">
-                  Update your profile information to unlock all features.
-                </p>
+                  </tbody>
+                </Table>
               </div>
+            </Tab>
+          ))}
+        </Tabs>
+      </Card.Body>
+    </Card>
+  </Col>
 
-              <div className="rounded border p-3 mb-3">
-                <div className="d-flex align-items-center">
-                  <div className="w-6 h-6 rounded-circle bg-bitradex-orange text-white d-flex justify-content-center align-items-center small text-light fw-bold">
-                    ✔
-                  </div>
-                  <h6 className="ms-2 mb-0 text-sm text-light fw-medium">
-                    Verify Your Identity
-                  </h6>
-                </div>
-                <p className="mt-2 text-xs text-light">
-                  Complete KYC verification to enable deposits and withdrawals.
-                </p>
-              </div>
+  {/* RIGHT COLUMN: Getting Started */}
+  <Col xs={12} md={12} lg={5}>
+    <Card className="bg-black shadow-light">
+      <Card.Header>
+        <h5
+          style={{ borderBottom: "5px solid orange", width: "200px" }}
+          className="mb-2 text-light"
+        >
+          Getting Started
+        </h5>
+        <p className="text-light small">
+          Steps to begin your investment journey
+        </p>
+      </Card.Header>
 
-              <div className="rounded border p-3 bg-muted">
-                <div className="d-flex align-items-center">
-                  <div className="w-6 h-6 rounded-circle bg-green-500 text-white d-flex justify-content-center align-items-center small">
-                    ✔
-                  </div>
-                  <h6 className="ms-2 mb-0 text-sm text-light fw-medium">
-                    Welcome Bonus Received
-                  </h6>
-                </div>
-                <p className="mt-2 text-xs text-light">
-                  You've received a{" "}
-                  <span
-                    style={{
-                      background: "orange",
-                      color: "black",
-                      height: "50px",
-                      width: "60px",
-                      borderRadius: "60%",
-                      padding: "3px",
-                    }}
-                  >
-                    $50
-                  </span>{" "}
-                  welcome bonus to start your investment journey!
-                </p>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Widget101 />
-      </Row>
+      <Card.Body>
+        {/* Step 1 */}
+        <div className="rounded border p-3 mb-3">
+          <div className="d-flex align-items-center">
+            <div className="w-6 h-6 rounded-circle bg-bitradex-orange text-white d-flex justify-content-center align-items-center small text-light fw-bold">
+              ✔
+            </div>
+            <h6 className="ms-2 mb-0 text-sm text-light fw-medium">
+              Complete Your Profile
+            </h6>
+          </div>
+          <p className="mt-2 text-xs text-light">
+            Update your profile information to unlock all features.
+          </p>
+        </div>
+
+        {/* Step 2 */}
+        <div className="rounded border p-3 mb-3">
+          <div className="d-flex align-items-center">
+            <div className="w-6 h-6 rounded-circle bg-bitradex-orange text-white d-flex justify-content-center align-items-center small text-light fw-bold">
+              ✔
+            </div>
+            <h6 className="ms-2 mb-0 text-sm text-light fw-medium">
+              Verify Your Identity
+            </h6>
+          </div>
+          <p className="mt-2 text-xs text-light">
+            Complete KYC verification to enable deposits and withdrawals.
+          </p>
+        </div>
+
+        {/* Step 3 */}
+        <div className="rounded border p-3 bg-muted">
+          <div className="d-flex align-items-center">
+            <div className="w-6 h-6 rounded-circle bg-green-500 text-white d-flex justify-content-center align-items-center small">
+              ✔
+            </div>
+            <h6 className="ms-2 mb-0 text-sm text-light fw-medium">
+              Welcome Bonus Received
+            </h6>
+          </div>
+          <p className="mt-2 text-xs text-light">
+            You've received a{" "}
+            <span
+              style={{
+                background: "orange",
+                color: "black",
+                height: "50px",
+                width: "60px",
+                borderRadius: "60%",
+                padding: "3px",
+              }}
+            >
+              $50
+            </span>{" "}
+            welcome bonus to start your investment journey!
+          </p>
+        </div>
+      </Card.Body>
+    </Card>
+  </Col>
+  <Widget101 />
+</Row>
+
     </Container>
   );
 };
