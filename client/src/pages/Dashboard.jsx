@@ -10,8 +10,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Dashboard = () => {
-  const [balance, setBalance] = useState(0);
   const [user, setUser] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const [priceBackup, setPriceBack] = useState({});
+  const [pricesTicker, setPricesTicker] = useState({});
   const [isBalanceVisible, setIsBalanceVisible] = useState(true);
   const [userVerification, setVerificationStatus] = useState({});
 
@@ -41,7 +43,6 @@ const Dashboard = () => {
         }
       });
     };
-    getUser();
 
     const getUserVerification = async () => {
       try {
@@ -55,7 +56,44 @@ const Dashboard = () => {
         console.log(error);
       }
     };
-    getUserVerification();
+
+    const FavTokens = async () => {
+      const socketTcker = new WebSocket("wss://your-render-app.onrender.com/ws/markPrice");
+
+      socketTcker.onopen = () => {
+          console.log('✅ Ticker WebSocket connected')
+      }
+
+      socketTcker.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
+          const symbol = msg.symbol?.toUpperCase();
+
+          console.log(msg);
+
+          if (!symbol) return;
+
+          //console.log(msg)
+          setPricesTicker((prev) => ({
+              ...prev,
+              [symbol]: {
+                  ...prev[symbol],
+                  ...msg
+              },
+          }))
+      }
+
+      socketTcker.onerror = ((err) => {
+          console.error('❌ Ticker WebSocket error:', err);
+      })
+
+      socketTcker.onclose = () => {
+          console.warn('🔌 Ticker WebSocket disconnected');
+      }
+      return () => socketTcker.close();
+  }
+  getUser();
+  FavTokens();
+  getUserVerification();
   }, []);
 
   const toggleBalanceVisibility = () => {
@@ -65,6 +103,15 @@ const Dashboard = () => {
   const verifyID = async () => {
     console.log("Start Verif");
     location.href = "https://kapital-kyc.vercel.app";
+  };
+
+  const formatVolume = (value) => {
+    const num = Number(value || 0);
+    if (num >= 1e12) return (num / 1e12).toFixed(5) + "T";
+    if (num >= 1e9) return (num / 1e9).toFixed(5) + "B";
+    if (num >= 1e6) return (num / 1e6).toFixed(5) + "M";
+    if (num >= 1e3) return (num / 1e3).toFixed(5) + "K";
+    return num.toFixed(2);
   };
 
   return (
