@@ -138,6 +138,11 @@ li {
   border-color: hsl(var(--border));
 }
 
+.custom-table {
+  background-color: #000 !important;
+}
+
+
 body {
   background-color: hsl(var(--foreground));
   color: hsl(var(--foreground));
