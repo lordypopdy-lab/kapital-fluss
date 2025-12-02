@@ -26,28 +26,28 @@ const Dashboard = () => {
     const newUser = JSON.parse(newU);
     const email = newUser.email;
     const ID = newUser._id;
-  
+
     const getUser = async () => {
       await axios.post("/getUser", { email }).then((data) => {
         if (data) {
           setUser(data.data);
           const tBalance =
             data.data.deposit + data.data.profit + data.data.bonuse;
-  
+
           const formattedBalance = new Intl.NumberFormat("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }).format(tBalance);
-  
+
           setBalance(formattedBalance);
         }
       });
     };
-  
+
     const getUserVerification = async () => {
       try {
         const response = await axios.post("/getUserVerification", { email });
-  
+
         if (response.data.status === "success") {
           console.log("User verification:", response.data.data);
           setVerificationStatus(response.data.data);
@@ -56,21 +56,21 @@ const Dashboard = () => {
         console.log(error);
       }
     };
-  
+
     const FavTokens = () => {
-      const socket = new WebSocket("wss://bitclub-websocket.onrender.com/ws/ticker");
-  
+      const socket = new WebSocket(
+        "wss://bitclub-websocket.onrender.com/ws/ticker"
+      );
+
       socket.onopen = () => {
         console.log("✅ MarkPrice WebSocket connected");
       };
-  
+
       socket.onmessage = (event) => {
         const msg = JSON.parse(event.data);
         const symbol = msg.symbol?.toUpperCase();
         if (!symbol) return;
 
-        console.log(msg)
-  
         setPricesTicker((prev) => ({
           ...prev,
           [symbol]: {
@@ -79,26 +79,25 @@ const Dashboard = () => {
           },
         }));
       };
-  
+
       socket.onerror = (err) => {
         console.error("❌ MarkPrice WebSocket error:", err);
       };
-  
+
       socket.onclose = () => {
         console.warn("🔌 MarkPrice WebSocket disconnected");
       };
-  
+
       return () => socket.close();
     };
-  
+
     getUser();
     getUserVerification();
-  
+
     const cleanup = FavTokens();
-  
+
     return cleanup;
   }, []);
-  
 
   const toggleBalanceVisibility = () => {
     setIsBalanceVisible((prev) => !prev);
@@ -293,6 +292,7 @@ const Dashboard = () => {
           </Card>
         </Col>
       </Row>
+
       {/* MARKET OVERVIEW + GETTING STARTED */}
       <Row className="g-4">
         <Col lg={7}>
@@ -308,56 +308,239 @@ const Dashboard = () => {
 
             <Card.Body>
               <Tabs defaultActiveKey="all" className="mb-3">
+                {/* ALL COINS */}
                 <Tab eventKey="all" title="All Coins">
                   <div className="row text-sm text-light fw-medium py-2">
                     <div className="col">Coin</div>
                     <div className="col text-end text-light">Price</div>
                     <div className="col text-end text-light">24h Change</div>
-                    <div className="col text-end text-light">Market Cap</div>
+                    <div className="col text-end text-light">Volume</div>
                   </div>
 
-                  <div className="row py-2">
-                    <div className="col d-flex text-light align-items-center">
-                      <Bitcoin
-                        className="me-2 h-4 w-4"
-                        style={{ color: "orange" }}
-                      />
-                      Bitcoin
-                    </div>
-                    <div className="col text-end text-light">$28,439.32</div>
-                    <div className="col text-end text-success">+2.5%</div>
-                    <div className="col text-end text-light">$542.8B</div>
-                  </div>
+                  <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                    {Object.keys(pricesTicker)
+                      .sort()
+                      .slice(0, 50) // load first 50 coins max
+                      .map((symbol) => {
+                        const coin = pricesTicker[symbol];
+                        if (!coin) return null;
 
-                  <div className="row py-2">
-                    <div className="col d-flex text-light align-items-center">
-                      <Coins
-                        className="me-2 h-4 w-4"
-                        style={{ color: "orange" }}
-                      />
-                      Ethereum
-                    </div>
-                    <div className="col text-end text-light">$2,273.81</div>
-                    <div className="col text-end text-success">+3.2%</div>
-                    <div className="col text-end text-light">$273.4B</div>
+                        const price = parseFloat(coin.lastPrice).toLocaleString(
+                          undefined,
+                          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                        );
+                        const changePercent = parseFloat(
+                          coin.priceChangePercent
+                        );
+                        const isPositive = changePercent >= 0;
+                        const volume = parseFloat(coin.volume).toLocaleString();
+
+                        return (
+                          <div key={symbol} className="row py-2">
+                            <div className="col d-flex text-light align-items-center">
+                              <Coins
+                                className="me-2 h-4 w-4"
+                                style={{ color: "orange" }}
+                              />
+                              {symbol.toUpperCase()}
+                            </div>
+                            <div className="col text-end text-light">
+                              ${price}
+                            </div>
+                            <div
+                              className={`col text-end ${
+                                isPositive ? "text-success" : "text-danger"
+                              }`}
+                            >
+                              {isPositive ? "+" : "-"}
+                              {Math.abs(changePercent).toFixed(2)}%
+                            </div>
+                            <div className="col text-end text-light">
+                              {volume}
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
                 </Tab>
 
+                {/* TRENDING */}
                 <Tab eventKey="trending" title="Trending">
-                  <div className="h-40 d-flex align-items-center justify-content-center text-light">
-                    Trending coins will be displayed here
+                  <div className="row text-sm text-light fw-medium py-2">
+                    <div className="col">Coin</div>
+                    <div className="col text-end text-light">Price</div>
+                    <div className="col text-end text-light">24h Change</div>
+                    <div className="col text-end text-light">Volume</div>
+                  </div>
+
+                  <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                    {Object.keys(pricesTicker)
+                      .sort(
+                        (a, b) =>
+                          parseFloat(pricesTicker[b].volume) -
+                          parseFloat(pricesTicker[a].volume)
+                      )
+                      .slice(0, 10) // top 10 trending
+                      .map((symbol) => {
+                        const coin = pricesTicker[symbol];
+                        if (!coin) return null;
+
+                        const price = parseFloat(coin.lastPrice).toLocaleString(
+                          undefined,
+                          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                        );
+                        const changePercent = parseFloat(
+                          coin.priceChangePercent
+                        );
+                        const isPositive = changePercent >= 0;
+                        const volume = parseFloat(coin.volume).toLocaleString();
+
+                        return (
+                          <div key={symbol} className="row py-2">
+                            <div className="col d-flex text-light align-items-center">
+                              <Coins
+                                className="me-2 h-4 w-4"
+                                style={{ color: "orange" }}
+                              />
+                              {symbol.toUpperCase()}
+                            </div>
+                            <div className="col text-end text-light">
+                              ${price}
+                            </div>
+                            <div
+                              className={`col text-end ${
+                                isPositive ? "text-success" : "text-danger"
+                              }`}
+                            >
+                              {isPositive ? "+" : "-"}
+                              {Math.abs(changePercent).toFixed(2)}%
+                            </div>
+                            <div className="col text-end text-light">
+                              {volume}
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
                 </Tab>
 
+                {/* GAINERS */}
                 <Tab eventKey="gainers" title="Gainers">
-                  <div className="h-40 d-flex align-items-center justify-content-center text-light">
-                    Top gainers will be displayed here
+                  <div className="row text-sm text-light fw-medium py-2">
+                    <div className="col">Coin</div>
+                    <div className="col text-end text-light">Price</div>
+                    <div className="col text-end text-light">24h Change</div>
+                    <div className="col text-end text-light">Volume</div>
+                  </div>
+
+                  <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                    {Object.keys(pricesTicker)
+                      .sort(
+                        (a, b) =>
+                          parseFloat(pricesTicker[b].priceChangePercent) -
+                          parseFloat(pricesTicker[a].priceChangePercent)
+                      )
+                      .slice(0, 10) // top 10 gainers
+                      .map((symbol) => {
+                        const coin = pricesTicker[symbol];
+                        if (!coin) return null;
+
+                        const price = parseFloat(coin.lastPrice).toLocaleString(
+                          undefined,
+                          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                        );
+                        const changePercent = parseFloat(
+                          coin.priceChangePercent
+                        );
+                        const isPositive = changePercent >= 0;
+                        const volume = parseFloat(coin.volume).toLocaleString();
+
+                        return (
+                          <div key={symbol} className="row py-2">
+                            <div className="col d-flex text-light align-items-center">
+                              <Coins
+                                className="me-2 h-4 w-4"
+                                style={{ color: "orange" }}
+                              />
+                              {symbol.toUpperCase()}
+                            </div>
+                            <div className="col text-end text-light">
+                              ${price}
+                            </div>
+                            <div
+                              className={`col text-end ${
+                                isPositive ? "text-success" : "text-danger"
+                              }`}
+                            >
+                              {isPositive ? "+" : "-"}
+                              {Math.abs(changePercent).toFixed(2)}%
+                            </div>
+                            <div className="col text-end text-light">
+                              {volume}
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
                 </Tab>
 
+                {/* LOSERS */}
                 <Tab eventKey="losers" title="Losers">
-                  <div className="h-40 d-flex align-items-center justify-content-center text-light">
-                    Top losers will be displayed here
+                  <div className="row text-sm text-light fw-medium py-2">
+                    <div className="col">Coin</div>
+                    <div className="col text-end text-light">Price</div>
+                    <div className="col text-end text-light">24h Change</div>
+                    <div className="col text-end text-light">Volume</div>
+                  </div>
+
+                  <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                    {Object.keys(pricesTicker)
+                      .sort(
+                        (a, b) =>
+                          parseFloat(pricesTicker[a].priceChangePercent) -
+                          parseFloat(pricesTicker[b].priceChangePercent)
+                      )
+                      .slice(0, 10) // top 10 losers
+                      .map((symbol) => {
+                        const coin = pricesTicker[symbol];
+                        if (!coin) return null;
+
+                        const price = parseFloat(coin.lastPrice).toLocaleString(
+                          undefined,
+                          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                        );
+                        const changePercent = parseFloat(
+                          coin.priceChangePercent
+                        );
+                        const isPositive = changePercent >= 0;
+                        const volume = parseFloat(coin.volume).toLocaleString();
+
+                        return (
+                          <div key={symbol} className="row py-2">
+                            <div className="col d-flex text-light align-items-center">
+                              <Coins
+                                className="me-2 h-4 w-4"
+                                style={{ color: "orange" }}
+                              />
+                              {symbol.toUpperCase()}
+                            </div>
+                            <div className="col text-end text-light">
+                              ${price}
+                            </div>
+                            <div
+                              className={`col text-end ${
+                                isPositive ? "text-success" : "text-danger"
+                              }`}
+                            >
+                              {isPositive ? "+" : "-"}
+                              {Math.abs(changePercent).toFixed(2)}%
+                            </div>
+                            <div className="col text-end text-light">
+                              {volume}
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
                 </Tab>
               </Tabs>
@@ -366,6 +549,7 @@ const Dashboard = () => {
         </Col>
 
         <Col lg={5}>
+          {/* GETTING STARTED CARD */}
           <Card className="bg-black shadow-light">
             <Card.Header>
               <h5
@@ -380,7 +564,7 @@ const Dashboard = () => {
             </Card.Header>
 
             <Card.Body>
-              {/* STEPS */}
+              {/* Steps Content */}
               <div className="rounded border p-3 mb-3">
                 <div className="d-flex align-items-center">
                   <div className="w-6 h-6 rounded-circle bg-bitradex-orange text-white d-flex justify-content-center align-items-center small text-light fw-bold">
@@ -390,7 +574,6 @@ const Dashboard = () => {
                     Complete Your Profile
                   </h6>
                 </div>
-
                 <p className="mt-2 text-xs text-light">
                   Update your profile information to unlock all features.
                 </p>
@@ -405,7 +588,6 @@ const Dashboard = () => {
                     Verify Your Identity
                   </h6>
                 </div>
-
                 <p className="mt-2 text-xs text-light">
                   Complete KYC verification to enable deposits and withdrawals.
                 </p>
@@ -420,7 +602,6 @@ const Dashboard = () => {
                     Welcome Bonus Received
                   </h6>
                 </div>
-
                 <p className="mt-2 text-xs text-light">
                   You've received a{" "}
                   <span
