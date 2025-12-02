@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/ws': {
-        target: "wss://bitclub.onrender.com",
+        target: "wss://bitclub-websocket.onrender.com",
         ws: true,
         changeOrigin: true,
         secure: true,

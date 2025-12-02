@@ -58,7 +58,7 @@ const Dashboard = () => {
     };
   
     const FavTokens = () => {
-      const socket = new WebSocket("wss://bitclub.onrender.com/ws/ticker");
+      const socket = new WebSocket("wss://bitclub-websocket.onrender.com/ws/ticker");
   
       socket.onopen = () => {
         console.log("✅ MarkPrice WebSocket connected");
