@@ -199,7 +199,7 @@ const bankDeposit = async () => {
                                 </>
                               }
                               name="cryptoMethod"
-                              id="ethereum"
+                              id="trx"
                               onChange={() =>
                                 setWalletAddress(walletMap.trc20)
                               }
