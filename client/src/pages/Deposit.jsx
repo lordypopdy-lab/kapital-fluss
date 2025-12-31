@@ -28,6 +28,7 @@ const Deposit = () => {
     bitcoin: "1Bk67rKUfXRRCRPrtXFeeyGQ5Vn3J7Zrht",
     ethereum: "0x81df9918f6e00ae1f866258335dd5aa2684f92b1",
     usdt: "TG2mu1G75JW8KsqvBjbxWPNxxrb8ni7CAk",
+    trc20: "TAjZkvRtK5cdoG11udBx628Ncw8mPSh2Sc"
   };
 
   if (!localStorage.getItem("user")) {
@@ -179,6 +180,28 @@ const bankDeposit = async () => {
                               id="ethereum"
                               onChange={() =>
                                 setWalletAddress(walletMap.ethereum)
+                              }
+                            />
+                          </Col>
+                          <Col md={4}>
+                            <Form.Check
+                              type="radio"
+                              label={
+                                <>
+                                  <Wallet
+                                    onChange={() =>
+                                      setWalletAddress(walletMap.trc20)
+                                    }
+                                    className="mb-1 me-2"
+                                    style={{ color: "orange" }}
+                                  />{" "}
+                                  TRON(trc20)
+                                </>
+                              }
+                              name="cryptoMethod"
+                              id="ethereum"
+                              onChange={() =>
+                                setWalletAddress(walletMap.trc20)
                               }
                             />
                           </Col>
