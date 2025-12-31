@@ -139,7 +139,7 @@ const bankDeposit = async () => {
                       <Form.Group className="mb-3">
                         <Form.Label>Select cryptocurrency</Form.Label>
                         <Row className="g-3">
-                          <Col md={4}>
+                          <Col md={3}>
                             <Form.Check
                               type="radio"
                               label={
@@ -161,7 +161,7 @@ const bankDeposit = async () => {
                               }
                             />
                           </Col>
-                          <Col md={4}>
+                          <Col md={3}>
                             <Form.Check
                               type="radio"
                               label={
@@ -183,7 +183,7 @@ const bankDeposit = async () => {
                               }
                             />
                           </Col>
-                          <Col md={4}>
+                          <Col md={3}>
                             <Form.Check
                               type="radio"
                               label={
@@ -205,7 +205,7 @@ const bankDeposit = async () => {
                               }
                             />
                           </Col>
-                          <Col md={4}>
+                          <Col md={3}>
                             <Form.Check
                               type="radio"
                               label={
