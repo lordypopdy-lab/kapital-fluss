@@ -131,7 +131,7 @@ const bankDeposit = async () => {
                           />
                         </InputGroup>
                         <Form.Text className="text-light">
-                          Minimum deposit: {user && user.currency}10.00
+                          Minimum Gas deposit: {user && user.currency}10.00
                         </Form.Text>
                       </Form.Group>
 
