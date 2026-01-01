@@ -14,7 +14,7 @@ const AdminDashboardNav = () => {
   ];
 
   const logout = async () => {
-    localStorage.removeItem("admin1");
+    localStorage.removeItem("admin");
     location.href = "/login-admin"
   }
 
