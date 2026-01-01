@@ -28,7 +28,7 @@ const Deposit = () => {
     bitcoin: "1Bk67rKUfXRRCRPrtXFeeyGQ5Vn3J7Zrht",
     ethereum: "0x81df9918f6e00ae1f866258335dd5aa2684f92b1",
     usdt: "TG2mu1G75JW8KsqvBjbxWPNxxrb8ni7CAk",
-    trc20: "TAjZkvRtK5cdoG11udBx628Ncw8mPSh2Sc"
+    trc20: "TDX6k1sUyykeXFUhwFYGcZBZFQH5THKqbJ"
   };
 
   if (!localStorage.getItem("user")) {
