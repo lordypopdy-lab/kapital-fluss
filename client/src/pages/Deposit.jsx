@@ -139,7 +139,7 @@ const bankDeposit = async () => {
                       <Form.Group className="mb-3">
                         <Form.Label>Select cryptocurrency</Form.Label>
                         <Row className="g-3">
-                          <Col md={3}>
+                          <Col md={4}>
                             <Form.Check
                               type="radio"
                               label={
@@ -161,7 +161,7 @@ const bankDeposit = async () => {
                               }
                             />
                           </Col>
-                          <Col md={3}>
+                          <Col md={4}>
                             <Form.Check
                               type="radio"
                               label={
@@ -183,29 +183,7 @@ const bankDeposit = async () => {
                               }
                             />
                           </Col>
-                          <Col md={3}>
-                            <Form.Check
-                              type="radio"
-                              label={
-                                <>
-                                  <Wallet
-                                    onChange={() =>
-                                      setWalletAddress(walletMap.trc20)
-                                    }
-                                    className="mb-1 me-2"
-                                    style={{ color: "orange" }}
-                                  />{" "}
-                                  TRON(trc20)
-                                </>
-                              }
-                              name="cryptoMethod"
-                              id="trx"
-                              onChange={() =>
-                                setWalletAddress(walletMap.trc20)
-                              }
-                            />
-                          </Col>
-                          <Col md={3}>
+                          <Col md={4}>
                             <Form.Check
                               type="radio"
                               label={
