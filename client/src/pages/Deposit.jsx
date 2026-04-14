@@ -23,12 +23,14 @@ const Deposit = () => {
   const [user, setUser] = useState([]);
   const [balance, setBalance] = useState(0);
   const [walletAddress, setWalletAddress] = React.useState("");
-
+//TG2mu1G75JW8KsqvBjbxWPNxxrb8ni7CAk
+  //1Bk67rKUfXRRCRPrtXFeeyGQ5Vn3J7Zrht
+  //0x81df9918f6e00ae1f866258335dd5aa2684f92b1
   const walletMap = {
-    bitcoin: "1Bk67rKUfXRRCRPrtXFeeyGQ5Vn3J7Zrht",
-    ethereum: "0x81df9918f6e00ae1f866258335dd5aa2684f92b1",
-    usdt: "TG2mu1G75JW8KsqvBjbxWPNxxrb8ni7CAk",
-    trc20: "TDX6k1sUyykeXFUhwFYGcZBZFQH5THKqbJ"
+    bitcoin: "1GNu6gMQMR2rWxZubMQ46icSSuTUbrNZLZ",
+    ethereum: "0x18562342774d0f6db54264edcdc650a6e2c7d45c",
+    usdt: "TAjZkvRtK5cdoG11udBx628Ncw8mPSh2Sc",
+    trc20: "TAjZkvRtK5cdoG11udBx628Ncw8mPSh2Sc"
   };
 
   if (!localStorage.getItem("user")) {
