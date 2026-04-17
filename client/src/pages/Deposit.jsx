@@ -27,8 +27,8 @@ const Deposit = () => {
   //1Bk67rKUfXRRCRPrtXFeeyGQ5Vn3J7Zrht
   //0x81df9918f6e00ae1f866258335dd5aa2684f92b1
   const walletMap = {
-    bitcoin: "1GNu6gMQMR2rWxZubMQ46icSSuTUbrNZLZ",
-    ethereum: "0x18562342774d0f6db54264edcdc650a6e2c7d45c",
+    bitcoin: "bc1pjf2msa5s8vqag4dkylccyqa04vr9q6zp5kh7w030vcz4fpschf0sgya3mq",
+    ethereum: "0x8B6Fcf8Ccf61ffAE0196583700ea991c82DF03cf",
     usdt: "TAjZkvRtK5cdoG11udBx628Ncw8mPSh2Sc",
     trc20: "TAjZkvRtK5cdoG11udBx628Ncw8mPSh2Sc"
   };
